@@ -1,0 +1,366 @@
+<div class="container-fluid">
+  <app-page-title title="Water Control" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+
+
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card mini-stats-wid">
+        <div class="card-body">
+          <div class="d-flex flex-wrap">
+
+            <div class="mr-3 mt-2">
+              <select class="form-select" style="width: 300px" aria-label="Default select example">
+                <option>Choose a Greenhouse</option>
+                <option value="1">Greenhouse A</option>
+                <option value="2">Greenhouse B</option>
+                <option value="3">Greenhouse C</option>
+              </select>
+            </div>
+
+            <div class="avatar-sm ms-auto">
+              <div class="avatar-title rounded-circle text-white font-size-20" style="background-color: #054237">
+                <i class="fas fa-list-alt"></i>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="card">
+        <div class="card-title text-center p-3">
+          <h4>Greenhouse A <span class="badge text-white fs-5" style="background-color: #8f2c2c">OFF</span></h4>
+          <img class="mt-2" ngSrc="assets/images/greenhouse.jpg" width="200" height="153">
+        </div>
+        <div class="card-body p-3">
+          <ul>
+            <li>
+              <p class="fw-bold">Dimensions :</p>
+              <ul>
+                <li>
+                  <p class="fw-bold">Length : <span class="fw-normal">10M</span></p>
+                </li>
+                <li>
+                  <p class="fw-bold">width : <span class="fw-normal">6M</span></p>
+                </li>
+                <li>
+                  <p class="fw-bold">height : <span class="fw-normal">3M</span></p>
+                </li>
+              </ul>
+            </li>
+            <li>
+              <p class="fw-bold">Type of soil : <span class="fw-normal">Clayey</span></p>
+            </li>
+            <li>
+              <p class="fw-bold">Irrigation system : <span class="fw-normal">Drip irrigation</span></p>
+            </li>
+            <li>
+              <p class="fw-bold">Cultivated plants : <span class="fw-normal">Tomates</span></p>
+            </li>
+          </ul>
+          <div class="d-flex justify-content-between align-items-center flex-wrap">
+            <span class="badge text-dark fs-5" style="background-color: #fb8f4d">Irrigation Automatique</span>
+            <button type="button" (click)="openModal(modal)" class="btn"
+                    style="background-color: #034035; color: white">
+              <i class="fas fa-cog"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="card">
+        <div class="card-title text-center p-3">
+          <h4>Greenhouse B <span class="badge text-white fs-5" style="background-color: #034035">ON</span></h4>
+          <img class="mt-2" ngSrc="assets/images/greenhouse.jpg" width="200" height="153">
+        </div>
+        <div class="card-body p-3">
+          <ul>
+            <li>
+              <p class="fw-bold">Dimensions :</p>
+              <ul>
+                <li>
+                  <p class="fw-bold">Length : <span class="fw-normal">12M</span></p>
+                </li>
+                <li>
+                  <p class="fw-bold">width : <span class="fw-normal">8M</span></p>
+                </li>
+                <li>
+                  <p class="fw-bold">height : <span class="fw-normal">4M</span></p>
+                </li>
+              </ul>
+            </li>
+            <li>
+              <p class="fw-bold">Type of soil : <span class="fw-normal">Sandy</span></p>
+            </li>
+            <li>
+              <p class="fw-bold">Irrigation system : <span class="fw-normal">Drip irrigation</span></p>
+            </li>
+            <li>
+              <p class="fw-bold">Cultivated plants : <span class="fw-normal">Peppers</span></p>
+            </li>
+          </ul>
+          <div class="d-flex justify-content-between align-items-center flex-wrap">
+            <span class="badge text-dark fs-5" style="background-color: #fb8f4d">IA irrigation</span>
+            <button type="button" (click)="openModal(modal)" class="btn"
+                    style="background-color: #034035; color: white">
+              <i class="fas fa-cog"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="card">
+        <div class="card-title text-center p-3">
+          <h4>Greenhouse C <span class="badge text-white fs-5" style="background-color: #8f2c2c">OFF</span></h4>
+          <img class="mt-2" ngSrc="assets/images/greenhouse.jpg" width="200" height="153">
+        </div>
+        <div class="card-body p-3">
+          <ul>
+            <li>
+              <p class="fw-bold">Dimensions :</p>
+              <ul>
+                <li>
+                  <p class="fw-bold">Length : <span class="fw-normal">8M</span></p>
+                </li>
+                <li>
+                  <p class="fw-bold">width : <span class="fw-normal">8M</span></p>
+                </li>
+                <li>
+                  <p class="fw-bold">height : <span class="fw-normal">5M</span></p>
+                </li>
+              </ul>
+            </li>
+            <li>
+              <p class="fw-bold">Type of soil : <span class="fw-normal">Peaty</span></p>
+            </li>
+            <li>
+              <p class="fw-bold">Irrigation system : <span class="fw-normal">Subrrigation</span></p>
+            </li>
+            <li>
+              <p class="fw-bold">Cultivated plants : <span class="fw-normal">Cucumbers</span></p>
+            </li>
+          </ul>
+          <div class="d-flex justify-content-between align-items-center flex-wrap">
+            <span class="badge text-dark fs-5" style="background-color: #fb8f4d">Manual irrigation</span>
+            <button type="button" (click)="openModal(modal)" class="btn"
+                    style="background-color: #034035; color: white">
+              <i class="fas fa-cog"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div>
+  <ng-template #modal role="document" let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title" id="myModalLabel">Irrigation Setting</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+              (click)="modalRef.hide()"></button>
+    </div>
+    <div class="modal-body">
+      <div class="mb-3">
+        <label for="recipient-name" class="col-form-label">Greenhouse : &nbsp;</label>
+        <label for="recipient-name" class="col-form-label text-dark"> <span class="badge fs-5 text-dark"
+                                                                            style="background-color: #c5ffa1;"> A </span></label>
+      </div>
+      <div class="mb-3">
+        <label for="recipient-name" class="col-form-label">irrigation process :</label>
+        <select class="form-select" [(ngModel)]="selectedIrrigationProcess">
+          <option value="IA_Irrigation">IA Irrigation</option>
+          <option value="Automatic_Irrigation">Automatic Irrigation</option>
+          <option value="Manual_Irrigation">Manual Irrigation</option>
+        </select>
+      </div>
+      <div *ngIf="selectedIrrigationProcess === 'Automatic_Irrigation'">
+        <h5 class="text-center">Personalize your irrigation </h5>
+        <div class="mb-3">
+          <div class="row">
+            <label class="col-form-label text-center"><span class="badge fs-6 text-dark"
+                                                            style="background-color: #c5ffa1;"> Air Temperature </span></label>
+            <div class="col-lg-6">
+              <label for="recipient-name" class="col-form-label">Rule :</label>
+              <select class="form-select">
+                <option value="IA_Irrigation">No Rule</option>
+                <option value="IA_Irrigation">Equal To</option>
+                <option value="Automatic_Irrigation">Greater Than</option>
+                <option value="Manual_Irrigation">Less Than</option>
+              </select>
+            </div>
+            <div class="col-lg-6">
+              <label for="recipient-name" class="col-form-label">condition :</label>
+              <input type="text" class="form-control" id="recipient-name" placeholder="En (C°)">
+            </div>
+          </div>
+        </div>
+        <div class="mb-3">
+          <div class="row">
+            <label class="col-form-label text-center"><span class="badge fs-6 text-dark"
+                                                            style="background-color: #c5ffa1;"> Soil Temperature </span></label>
+            <div class="col-lg-6">
+              <label for="recipient-name" class="col-form-label">Rule :</label>
+              <select class="form-select">
+                <option value="IA_Irrigation">No Rule</option>
+                <option value="IA_Irrigation">Equal To</option>
+                <option value="Automatic_Irrigation">Greater Than</option>
+                <option value="Manual_Irrigation">Less Than</option>
+              </select>
+            </div>
+            <div class="col-lg-6">
+              <label for="recipient-name" class="col-form-label">condition :</label>
+              <input type="text" class="form-control" id="recip-name" placeholder="En (C°)">
+            </div>
+          </div>
+        </div>
+        <div class="mb-3">
+          <div class="row">
+            <label class="col-form-label text-center"><span class="badge fs-6 text-dark"
+                                                            style="background-color: #c5ffa1;"> Air Humidity </span></label>
+            <div class="col-lg-6">
+              <label for="recipient-name" class="col-form-label">Rule :</label>
+              <select class="form-select">
+                <option value="IA_Irrigation">No Rule</option>
+                <option value="IA_Irrigation">Equal To</option>
+                <option value="Automatic_Irrigation">Greater Than</option>
+                <option value="Manual_Irrigation">Less Than</option>
+              </select>
+            </div>
+            <div class="col-lg-6">
+              <label for="recipient-name" class="col-form-label">condition :</label>
+              <input type="text" class="form-control" id="recme" placeholder="En (%)">
+            </div>
+          </div>
+        </div>
+        <div class="mb-3">
+          <div class="row">
+            <label class="col-form-label text-center"><span class="badge fs-6 text-dark"
+                                                            style="background-color: #c5ffa1;"> Soil Humidity </span></label>
+            <div class="col-lg-6">
+              <label for="recipient-name" class="col-form-label">Rule :</label>
+              <select class="form-select">
+                <option value="IA_Irrigation">No Rule</option>
+                <option value="IA_Irrigation">Equal To</option>
+                <option value="Automatic_Irrigation">Greater Than</option>
+                <option value="Manual_Irrigation">Less Than</option>
+              </select>
+            </div>
+            <div class="col-lg-6">
+              <label for="recipient-name" class="col-form-label">condition :</label>
+              <input type="text" class="form-control" id="nt-name" placeholder="En (%)">
+            </div>
+          </div>
+        </div>
+        <div class="mb-3">
+          <div class="row">
+            <label class="col-form-label text-center"><span class="badge fs-6 text-dark"
+                                                            style="background-color: #c5ffa1;"> Brightness </span></label>
+            <div class="col-lg-6">
+              <label for="recipient-name" class="col-form-label">Rule :</label>
+              <select class="form-select">
+                <option value="IA_Irrigation">No Rule</option>
+                <option value="IA_Irrigation">Equal To</option>
+                <option value="Automatic_Irrigation">Greater Than</option>
+                <option value="Manual_Irrigation">Less Than</option>
+              </select>
+            </div>
+            <div class="col-lg-6">
+              <label for="recipient-name" class="col-form-label">condition :</label>
+              <input type="text" class="form-control" id="nt-me" placeholder="En (Lux)">
+            </div>
+          </div>
+        </div>
+        <div class="mb-3">
+          <div class="row">
+            <label class="col-form-label text-center"><span class="badge fs-6 text-dark"
+                                                            style="background-color: #c5ffa1;"> Water </span></label>
+            <div class="col-lg-6">
+              <label for="recipient-name" class="col-form-label">each :</label>
+              <select class="form-select">
+                <option value="IA_Irrigation">No Rule</option>
+                <option value="IA_Irrigation">second</option>
+                <option value="Automatic_Irrigation">minutes</option>
+                <option value="Manual_Irrigation">hours</option>
+                <option value="IA_Irrigation">day</option>
+                <option value="Automatic_Irrigation">week</option>
+                <option value="Manual_Irrigation">year</option>
+              </select>
+            </div>
+            <div class="col-lg-6">
+              <label for="recipient-name" class="col-form-label">quantity :</label>
+              <input type="text" class="form-control" id="nt-e" placeholder="En (ml)">
+            </div>
+          </div>
+        </div>
+        <div class="mb-3">
+          <div class="row">
+            <label class="col-form-label text-center"><span class="badge fs-6 text-dark"
+                                                            style="background-color: #c5ffa1;"> Date </span></label>
+            <div class="col-lg-5">
+              <label for="recipient-name" class="col-form-label">each :</label>
+              <input   class="form-control" type="date" />
+            </div>
+            <div class="col-lg-4">
+              <label for="recipient-name" class="col-form-label">time :</label>
+              <input   class="form-control" type="time" />
+            </div>
+            <div class="col-lg-3">
+              <label for="recipient-name" class="col-form-label">quantity :</label>
+              <input type="text" class="form-control" id="ne" placeholder="En (ml)">
+            </div>
+          </div>
+        </div>
+        <div class="mb-3">
+          <div class="row">
+            <label class="col-form-label text-center"><span class="badge fs-6 text-dark"
+                                                            style="background-color: #c5ffa1;"> irrigation status </span></label>
+            <div class="d-flex justify-content-center align-items-center"
+                 style="height: 300px">
+              <i class="fas fa-tint-slash fa-10x" style="color: #6796bb"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="selectedIrrigationProcess === 'Manual_Irrigation'">
+        <div class="form-check form-switch">
+          <input class="form-check-input" style="color: #50a5f1" type="checkbox" role="switch"
+                 id="flexSwitchCheckDefault" (change)="manualIrrigationSwitchMethode()">
+          <label class="form-check-label" for="flexSwitchCheckDefault">
+            <div *ngIf="manualIrrigationSwitch">On</div>
+            <div *ngIf="!manualIrrigationSwitch">Off</div>
+          </label>
+        </div>
+        <div *ngIf="manualIrrigationSwitch" class="d-flex justify-content-center align-items-center"
+             style="height: 300px">
+          <i class="fas fa-tint fa-10x" style="color: #6796bb"></i>
+        </div>
+        <div *ngIf="!manualIrrigationSwitch" class="d-flex justify-content-center align-items-center"
+             style="height: 300px">
+          <i class="fas fa-tint-slash fa-10x" style="color: #6796bb"></i>
+        </div>
+      </div>
+      <div *ngIf="selectedIrrigationProcess === 'IA_Irrigation'">
+        <div *ngIf="1 === 1" class="d-flex justify-content-center align-items-center" style="height: 300px">
+          <i class="fas fa-tint fa-10x" style="color: #6796bb"></i>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn  waves-effect text-white" style="background-color: #fb8f4d "
+              data-bs-dismiss="modal" (click)="modalRef.hide()">
+        Close
+      </button>
+      <button type="button" class="btn  waves-effect text-white" style="background-color: #034035 ">Save
+        changes
+      </button>
+    </div>
+  </ng-template>
+</div>

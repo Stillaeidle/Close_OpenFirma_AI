@@ -1,0 +1,188 @@
+<div class="container-fluid">
+  <app-page-title title="Overview" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+
+  <div class="row">
+    <div class="col-lg-6 ">
+      <div class="row h-50">
+        <div class="col-lg-6 h-100">
+          <div class="card mini-stats-wid h-75">
+            <div class="card-body">
+              <div class="d-flex flex-wrap">
+                <div class="mr-3">
+                  <p class="text-muted mb-2">Fields</p>
+                  <h5 class="mb-0">{{ fields.length }}</h5>
+                </div>
+                <div class="avatar-sm ms-auto">
+                  <div class="avatar-title rounded-circle text-white font-size-20" style="background-color: #054237">
+                    <i class="fas fa-object-ungroup"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6 h-100">
+          <div class="card mini-stats-wid h-75">
+            <div class="card-body">
+              <div class="d-flex flex-wrap">
+                <div class="mr-3">
+                  <p class="text-muted mb-2">Distinct Crop</p>
+                  <h5 class="mb-0">{{ 4 }}</h5>
+                </div>
+                <div class="avatar-sm ms-auto">
+                  <div class="avatar-title rounded-circle text-white font-size-20" style="background-color: #054237">
+                    <i class="fas fa-seedling"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6 h-100">
+          <div class="card mini-stats-wid h-75">
+            <div class="card-body">
+              <div class="d-flex flex-wrap">
+                <div class="mr-3">
+                  <p class="text-muted mb-2">Total Area</p>
+                  <h5 class="mb-0">{{ '50.23 ha, 502300 m²'}}</h5>
+                </div>
+                <div class="avatar-sm ms-auto">
+                  <div class="avatar-title rounded-circle text-white font-size-20" style="background-color: #054237">
+                    <i class="fas fa-ruler"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6 h-100">
+          <div class="card mini-stats-wid h-75">
+            <div class="card-body">
+              <div class="d-flex flex-wrap">
+                <div class="mr-3">
+                  <p class="text-muted mb-2">Temperature</p>
+                  <h5 class="mb-0">{{'25 °C'}}</h5>
+                </div>
+                <div class="avatar-sm ms-auto">
+                  <div class="avatar-title rounded-circle text-white font-size-20" style="background-color: #054237">
+                    <i class="fas fa-thermometer-half"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="card mini-stats-wid">
+        <div class="card-body">
+          <div class="d-flex flex-wrap">
+            <div class="mr-3">
+              <p class="font-weight-bolder mb-2">Crop distribution</p>
+            </div>
+            <div id="cropChart">
+              <apx-chart
+                [series]="cropChartOptions.series"
+                [chart]="cropChartOptions.chart"
+                [labels]="cropChartOptions.labels"
+                [dataLabels]="cropChartOptions.dataLabels"
+                [title]="cropChartOptions.title"
+                [fill]="cropChartOptions.fill"
+                [states]="cropChartOptions.states"
+                [plotOptions]="cropChartOptions.plotOptions"
+                [stroke]="cropChartOptions.stroke"
+                [theme]="cropChartOptions.theme"
+                [responsive]="cropChartOptions.responsive"
+              ></apx-chart>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-8">
+      <div class="col-lg mb-4">
+        <div id="fieldsMap" style="height: 500px; z-index: 0"></div>
+      </div>
+      <div class="col-lg">
+        <div class="card w-100">
+          <div class="card-body">
+            <h5 class="card-title">Water Requirement</h5>
+            <div class="card-text">
+              <div class="mr-3">
+                <p class="font-weight-bolder mb-2">Today</p>
+              </div>
+              <div id="barChart">
+                <apx-chart
+                  [series]="barChartOptions.series"
+                  [chart]="barChartOptions.chart"
+                  [dataLabels]="barChartOptions.dataLabels"
+                  [plotOptions]="barChartOptions.plotOptions"
+                  [xaxis]="barChartOptions.xaxis"
+                ></apx-chart>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="card w-100 mb-2">
+        <div class="card-body">
+          <h5 class="card-title">Irrigation schedule</h5>
+          <div class="card-text" *ngIf="fields.length == 0">
+            <div class="card w-100 mb-2">
+              <div class="card-body">
+                <h5 class="mx-2 text-center">No data available</h5>
+              </div>
+            </div>
+          </div>
+          <div class="card-text" *ngIf="fields.length != 0">
+            <div class="card w-100 mb-2 irrigation-card">
+              <div class="card-body">
+                <h5 class="card-title">Field 1</h5>
+                <div class="card-text">
+                  <p class="text-muted mb-1">Crop type : Corn</p>
+                  <p class="text-muted mb-1">Next irrigation : 5 March 2024</p>
+                  <p class="text-muted mb-1">Irrigation amount : 22 m³/ha</p>
+                </div>
+              </div>
+            </div>
+            <div class="card w-100 mb-2 irrigation-card">
+              <div class="card-body">
+                <h5 class="card-title">Field 2</h5>
+                <div class="card-text">
+                  <p class="text-muted mb-1">Crop type : Wheat</p>
+                  <p class="text-muted mb-1">Next irrigation : 7 March 2024</p>
+                  <p class="text-muted mb-1">Irrigation amount : 30 m³/ha</p>
+                </div>
+              </div>
+            </div>
+            <div class="card w-100 mb-2 irrigation-card">
+              <div class="card-body">
+                <h5 class="card-title">Field 3</h5>
+                <div class="card-text">
+                  <p class="text-muted mb-1">Crop type : Barley</p>
+                  <p class="text-muted mb-1">Next irrigation : 8 March 2024</p>
+                  <p class="text-muted mb-1">Irrigation amount : 26 m³/ha</p>
+                </div>
+              </div>
+            </div>
+            <div class="card w-100 mb-2 irrigation-card">
+              <div class="card-body">
+                <h5 class="card-title">Field 4</h5>
+                <div class="card-text">
+                  <p class="text-muted mb-1">Crop type : Corn</p>
+                  <p class="text-muted mb-1">Next irrigation : 6 March 2024</p>
+                  <p class="text-muted mb-1">Irrigation amount : 45 m³/ha</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

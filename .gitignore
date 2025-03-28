@@ -1,0 +1,114 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
+.pytest_cache/
+
+# Virtual Environment
+venv/
+ENV/
+env/
+.env
+.venv
+env.bak/
+venv.bak/
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Frontend (Next.js)
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/.cache/
+frontend/build/
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# Docker
+.docker/
+docker-compose.override.yml
+
+# ML models & data files
+*.keras
+*.h5
+*.pkl
+*.pt
+*.pth
+*.onnx
+*.pb
+*.joblib
+backend/app/data/raw/
+backend/app/data/processed/
+# Uncomment if you want to exclude historical data
+# backend/app/data/historical/
+
+# Large data files
+*.csv
+*.parquet
+*.feather
+*.hdf5
+*.json
+!.env.example
+!docker-compose*.yml
+
+# Temporary files
+*.log
+*.tmp
+tmp/
+temp/
+
+# Documentation builds
+docs/_build/
+docs/site/
+backend/docs/site/
+frontend/docs/site/
+
+# Alembic migration backups
+alembic/versions/__pycache__/
+alembic/__pycache__/
+
+# Secrets
+*.pem
+*.key
+*.crt
+secrets/
+.env.*
+!.env.example
+
+# Operating system files
+Thumbs.db
+.DS_Store

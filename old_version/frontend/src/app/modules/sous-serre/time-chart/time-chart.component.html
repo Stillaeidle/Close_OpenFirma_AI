@@ -1,0 +1,258 @@
+<div class="container-fluid">
+  <app-page-title title="Time Chart" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card mini-stats-wid">
+        <div class="card-body">
+          <div class="d-flex flex-wrap">
+
+            <div class="mr-3 mt-2">
+              <select class="form-select" style="width: 300px" aria-label="Default select example">
+                <option>Choose a Greenhouse</option>
+                <option value="1">Greenhouse A</option>
+                <option value="2">Greenhouse B</option>
+                <option value="3">Greenhouse C</option>
+              </select>
+            </div>
+
+            <div class="avatar-sm ms-auto">
+              <div class="avatar-title rounded-circle text-white font-size-20" style="background-color: #054237">
+                <i class="fas fa-list-alt"></i>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-6">
+      <div class="card blog-stats-wid">
+        <div class="card-body">
+          <div class="d-flex flex-wrap">
+            <div class="mr-3">
+              <p class="text-muted mb-2">Brightness</p>
+              <h5 class="mb-0">2195 Lux</h5>
+            </div>
+            <div class="avatar-sm ms-auto">
+              <div class="avatar-title rounded-circle text-white font-size-20" style="background-color: #054237">
+                <i class="fas fa-sun"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="card mini-stats-wid">
+        <div class="card-body">
+          <div class="d-flex flex-wrap">
+            <div class="mr-3">
+              <p class="text-muted mb-2">Water</p>
+              <h5 class="mb-0">63%</h5>
+            </div>
+            <div class="avatar-sm ms-auto">
+              <div class="avatar-title rounded-circle text-white font-size-20" style="background-color: #054237">
+                <i class="fas fa-water"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row d-flex align-items-stretch">
+    <div class="col-lg-3 d-flex flex-column">
+      <div class="card p-0 h-100">
+        <div class="card-body text-center ">
+          <h5> Air Humidity</h5>
+          <div #gaugeAirHumidityContainer style="height: 240px;"></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 d-flex flex-column">
+      <div class="card h-100">
+        <div class="card-body text-center">
+          <h5> Soil Humidity</h5>
+          <div #gaugeSoilHumidityContainer style="height: 240px;"></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 d-flex flex-column">
+      <div class="card h-100">
+        <div class="card-body text-center">
+          <h5> Air Temperature</h5>
+          <div #gaugeAirTemperatureContainer style="height: 200px; margin-top: 25px"></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 d-flex flex-column">
+      <div class="card h-100">
+        <div class="card-body text-center">
+          <h5> Soil Temperature</h5>
+          <div #gaugeSoilTemperatureContainer style="height: 200px; margin-top: 25px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card mini-stats-wid">
+        <div class="card-body">
+          <div class="d-flex flex-wrap">
+
+            <div class="mr-3">
+              <p class="text-muted mb-2">Sort By</p>
+                  <select class="form-select" style="width: 200px" aria-label="Default select example">
+                    <option>Mounths</option>
+                    <option value="1">Years</option>
+                    <option value="2">Weeks</option>
+                    <option value="3">Days</option>
+                    <option value="3">Hours</option>
+                    <option value="3">Minutes</option>
+                  </select>
+            </div>
+
+            <div style="margin-left: 20px">
+              <p class="text-muted mb-2">Start Date</p>
+              <input style="width: 200px" id="startDate" class="form-control" type="date" />
+            </div>
+
+            <div style="margin-left: 20px">
+              <p class="text-muted mb-2">End Date</p>
+              <input style="width: 200px" id="endDate" class="form-control" type="date" />
+            </div>
+
+            <div class="avatar-sm ms-auto">
+              <div class="avatar-title rounded-circle text-white font-size-20" style="background-color: #054237">
+                <i class="fas fa-list-alt"></i>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card p-3 text-center">
+        <h4 class="me-2">Humidity en (%)</h4>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-lg-6">
+              <apx-chart
+                         [series]="seriesAirHumidity"
+                         [chart]="chartAirHumidity"
+                         [dataLabels]="dataLabelsAirHumidity"
+                         [markers]="markersAirHumidity"
+                         [title]="titleAirHumidity"
+                         [stroke]="strokeAirHumidity"
+                         [fill]="fillAirHumidity"
+                         [yaxis]="yaxisAirHumidity"
+                         [xaxis]="xaxisAirHumidity"
+                         [tooltip]="tooltipAirHumidity"
+                         [autoUpdateSeries]="true"
+              ></apx-chart>
+            </div>
+            <div class="col-lg-6">
+              <apx-chart
+                [series]="seriesSoilHumidity"
+                [chart]="chartSoilHumidity"
+                [dataLabels]="dataLabelsSoilHumidity"
+                [markers]="markersSoilHumidity"
+                [stroke]="strokeSoilHumidity"
+                [title]="titleSoilHumidity"
+                [fill]="fillSoilHumidity"
+                [yaxis]="yaxisSoilHumidity"
+                [xaxis]="xaxisSoilHumidity"
+                [tooltip]="tooltipSoilHumidity"
+                [autoUpdateSeries]="true"
+              ></apx-chart>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card p-3 text-center">
+        <h4 class="me-2">Temperature en (°C)</h4>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-lg-6">
+              <apx-chart
+                [series]="seriesAirTemperature"
+                [chart]="chartAirTemperature"
+                [dataLabels]="dataLabelsAirTemperature"
+                [markers]="markersAirTemperature"
+                [title]="titleAirTemperature"
+                [stroke]="strokeAirTemperature"
+                [fill]="fillAirTemperature"
+                [yaxis]="yaxisAirTemperature"
+                [xaxis]="xaxisAirTemperature"
+                [tooltip]="tooltipAirTemperature"
+                [autoUpdateSeries]="true"
+              ></apx-chart>
+            </div>
+            <div class="col-lg-6">
+              <apx-chart
+                [series]="seriesSoilTemperature"
+                [chart]="chartSoilTemperature"
+                [dataLabels]="dataLabelsSoilTemperature"
+                [markers]="markersSoilTemperature"
+                [stroke]="strokeSoilTemperature"
+                [title]="titleSoilTemperature"
+                [fill]="fillSoilTemperature"
+                [yaxis]="yaxisSoilTemperature"
+                [xaxis]="xaxisSoilTemperature"
+                [tooltip]="tooltipSoilTemperature"
+                [autoUpdateSeries]="true"
+              ></apx-chart>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card p-4 text-center">
+        <h4>Real-time Hygrothermal Chart</h4>
+      <apx-chart
+        [series]="chartTempHumOptions.series"
+        [chart]="chartTempHumOptions.chart"
+        [xaxis]="chartTempHumOptions.xaxis"
+        [stroke]="chartTempHumOptions.stroke"
+        [tooltip]="chartTempHumOptions.tooltip"
+        [dataLabels]="chartTempHumOptions.dataLabels"
+        [legend]="chartTempHumOptions.legend"
+        [markers]="chartTempHumOptions.markers"
+        [grid]="chartTempHumOptions.grid"
+        [yaxis]="chartTempHumOptions.yaxis"
+        [title]="chartTempHumOptions.title"
+      ></apx-chart>
+      </div>
+    </div>
+  </div>
+
+
+      <div class="card p-3 text-center">
+        <h4 class="me-2">Brightness en (Lux)</h4>
+        <div class="card-body p-0">
+          <div class="row">
+            <div class="col-lg-12 ">
+              <div #lineBrightnessContainer style="height: 380px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+</div>

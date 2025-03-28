@@ -1,0 +1,237 @@
+<div class="container-fluid">
+  <app-page-title title="Fields statistics" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+
+  <div class="row ">
+    <div class="col-lg-3">
+      <div class="card mini-stats-wid pb-0">
+        <div class="card-body pb-2">
+          <div class="d-flex flex-wrap">
+            <div class="mr-3">
+              <p class="text-muted mb-2">Pick a field :</p>
+              <select class="form-select mb-0" style="width: 150px" [(ngModel)]="selectedField"
+                      (change)="onSelectField()">
+                <option *ngFor="let field of fields" [ngValue]="field"
+                        [selected]="fields.length == 0? null: fields[0]">{{ field.fieldName }}</option>
+              </select>
+            </div>
+            <div class="avatar-sm ms-auto">
+              <div class="avatar-title rounded-circle text-white font-size-20" style="background-color: #054237">
+                <i class="fas fa-list-alt"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3">
+      <div class="card mini-stats-wid">
+        <div class="card-body">
+          <div class="d-flex flex-wrap">
+            <div class="mr-3">
+              <p class="text-muted mb-2">Field area</p>
+              <h5
+                class="mb-0">{{ selectedField ? ((selectedField.area / 10000).toFixed(2) + ' ha, ' + selectedField.area + ' m²') : '-' }}</h5>
+            </div>
+            <div class="avatar-sm ms-auto">
+              <div class="avatar-title rounded-circle text-white font-size-20" style="background-color: #054237">
+                <i class="fas fa-crop-alt"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3">
+      <div class="card mini-stats-wid">
+        <div class="card-body">
+          <div class="d-flex flex-wrap">
+            <div class="mr-3">
+              <p class="text-muted mb-2">Crop type</p>
+              <h5 class="mb-0">{{selectedField?.crop_type || '-'}}</h5>
+            </div>
+            <div class="avatar-sm ms-auto">
+              <div class="avatar-title rounded-circle text-white font-size-20" style="background-color: #054237">
+                <i class="fas fa-leaf"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3">
+      <div class="card mini-stats-wid">
+        <div class="card-body">
+          <div class="d-flex flex-wrap">
+            <div class="mr-3">
+              <p class="text-muted mb-2">Soil moisture</p>
+              <h5 class="mb-0">{{ '30 %'}}</h5>
+            </div>
+            <div class="avatar-sm ms-auto">
+              <div class="avatar-title rounded-circle text-white font-size-20" style="background-color: #054237">
+                <i class="fas fa-water"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row d-flex flex-wrap">
+    <div class="col-sm-6">
+      <div id="mapStats" style="height: 95%"></div>
+    </div>
+    <div class="col-sm-6 ">
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="card mini-stats-wid weather-card">
+            <div class="card-body">
+              <div class="d-flex flex-wrap">
+                <div class="mr-3">
+                  <p class="text-muted mb-2">Weather Condition</p>
+                  <h5 class="mb-0">{{currentWeatherData?.weather}}</h5>
+                </div>
+                <div class="avatar-sm ms-auto">
+                  <div class="avatar-title rounded-circle text-white font-size-20" style="background-color: #054237">
+                    <i class="fas fa-cloud-sun"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="card mini-stats-wid weather-card">
+            <div class="card-body">
+              <div class="d-flex flex-wrap">
+                <div class="mr-3">
+                  <p class="text-muted mb-2">Apparent Temperature</p>
+                  <h5 class="mb-0">{{currentWeatherData?.apparentTemperature.toFixed(2) || '-'}} °C</h5>
+                </div>
+                <div class="avatar-sm ms-auto">
+                  <div class="avatar-title rounded-circle text-white font-size-20" style="background-color: #054237">
+                    <i class="fas fa-thermometer-half"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="card mini-stats-wid weather-card">
+            <div class="card-body">
+              <div class="d-flex flex-wrap">
+                <div class="mr-3">
+                  <p class="text-muted mb-2">Cloud Cover</p>
+                  <h5 class="mb-0">{{currentWeatherData?.cloudCover.toFixed(2) || '-'}} %</h5>
+                </div>
+                <div class="avatar-sm ms-auto">
+                  <div class="avatar-title rounded-circle text-white font-size-20" style="background-color: #054237">
+                    <i class="fas fa-cloud"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="card mini-stats-wid weather-card">
+            <div class="card-body">
+              <div class="d-flex flex-wrap">
+                <div class="mr-3">
+                  <p class="text-muted mb-2">Rain</p>
+                  <h5 class="mb-0">{{currentWeatherData?.rain.toFixed(2) || '-'}} mm</h5>
+                </div>
+                <div class="avatar-sm ms-auto">
+                  <div class="avatar-title rounded-circle text-white font-size-20" style="background-color: #054237">
+                    <i class="fas fa-cloud-rain"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="card mini-stats-wid weather-card">
+            <div class="card-body">
+              <div class="d-flex flex-wrap">
+                <div class="mr-3">
+                  <p class="text-muted mb-2">Wind Speed (10m)</p>
+                  <h5 class="mb-0">{{currentWeatherData?.windSpeed10m.toFixed(2) || '-'}} Km/h</h5>
+                </div>
+                <div class="avatar-sm ms-auto">
+                  <div class="avatar-title rounded-circle text-white font-size-20" style="background-color: #054237">
+                    <i class="fas fa-wind"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="card mini-stats-wid weather-card">
+            <div class="card-body">
+              <div class="d-flex flex-wrap">
+                <div class="mr-3">
+                  <p class="text-muted mb-2">Wind Direction (10m)</p>
+                  <h5 class="mb-0">{{currentWeatherData?.windDirection10m}}</h5>
+                </div>
+                <div class="avatar-sm ms-auto">
+                  <div class="avatar-title rounded-circle text-white font-size-20" style="background-color: #054237">
+                    <i class="fas fa-location-arrow"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-2">
+    <div class="col-lg-6">
+      <div id="chart" class="">
+        <select class="form-select" [(ngModel)]="selectedYAxis" (ngModelChange)="onYAxisChange()"
+                style="margin-left: 200px; margin-top: -4px; width: auto; position: absolute; z-index: 999">
+          <option value="relativeHumidity">Relative Humidity (%)</option>
+          <option value="evapotranspiration">Evapotranspiration (%)</option>
+          <option value="temperature">Temperature (°C)</option>
+          <option value="windSpeed">Wind Speed (Km/h)</option>
+          <option value="solarRadiation">Solar Radiation (W/m²)</option>
+        </select>
+        <apx-chart
+          [series]="chartOptions.series"
+          [chart]="chartOptions.chart"
+          [xaxis]="chartOptions.xaxis"
+          [stroke]="chartOptions.stroke"
+          [dataLabels]="chartOptions.dataLabels"
+          [yaxis]="chartOptions.yaxis"
+          [labels]="chartOptions.labels"
+          [legend]="chartOptions.legend"
+          [title]="chartOptions.title"
+          [subtitle]="chartOptions.subtitle"
+        ></apx-chart>
+
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div>
+        <apx-chart id="WaterRequirementChart"
+                   [series]="WaterRequirementChartOptions.series"
+                   [chart]="WaterRequirementChartOptions.chart"
+                   [xaxis]="WaterRequirementChartOptions.xaxis"
+                   [stroke]="WaterRequirementChartOptions.stroke"
+                   [dataLabels]="WaterRequirementChartOptions.dataLabels"
+                   [yaxis]="WaterRequirementChartOptions.yaxis"
+                   [labels]="WaterRequirementChartOptions.labels"
+                   [legend]="WaterRequirementChartOptions.legend"
+                   [title]="WaterRequirementChartOptions.title"
+                   [subtitle]="WaterRequirementChartOptions.subtitle"
+        ></apx-chart>
+      </div>
+    </div>
+  </div>
+</div>

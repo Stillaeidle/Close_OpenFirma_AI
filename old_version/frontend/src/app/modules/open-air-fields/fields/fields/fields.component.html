@@ -1,0 +1,77 @@
+<div class="container-fluid">
+  <app-page-title title="Manage fields" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+
+  <div id="map" style="height: 80vh; z-index: 0"></div>
+  <div style="position: absolute; right: 15px; top: 140px; z-index: 500; height: 45px">
+    <div
+      class="h-100 rounded-full border-[0.5px] border-stroke bg-gray px-3 py-1  text-center hover:text-primary dark:border-strokedark dark:bg-meta-4 dark:text-white">
+      <button class="h-100 btn btn-danger"
+              (click)="startDrawing()"> {{ isDrawing ? 'Cancel' : 'Add new field'}}</button>
+    </div>
+  </div>
+</div>
+
+<div>
+  <ng-template #modal role="document" let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title" id="myModalLabel">Enter your field information</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+              (click)="modalRef.hide()"></button>
+    </div>
+    <div class="modal-body">
+      <div class="mb-3">
+        <label for="recipient-name" class="col-form-label">Field Area : &nbsp;</label>
+        <label for="recipient-name" class="col-form-label text-black"><span class="badge font-size-14" style="background-color: #c3fda0; color: black"> 0.12 ha, 1250.25 m<sup>2</sup></span></label>
+      </div>
+      <div class="mb-3">
+        <label for="recipient-name" class="col-form-label">Crop Type :</label>
+        <select class="form-select">
+          <option value="Alfalfa">Alfalfa</option>
+          <option value="Beans">Barley</option>
+          <option value="Corn" selected>Corn</option>
+          <option value="Olive">Olive</option>
+          <option value="Wheat">Wheat</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="recipient-name" class="col-form-label">Field Name :</label>
+        <input type="text" class="form-control" id="recipient-name">
+      </div>
+      <div class="mb-3">
+        <label for="recipient-name" class="col-form-label">Irrigation System :</label>
+        <select class="form-select">
+          <option value="drip" selected>Drip</option>
+          <option value="sprinkler">Sprinkler</option>
+          <option value="center_pivot">Center Pivot</option>
+          <option value="flood">Flood</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="recipient-name" class="col-form-label">Pipe Size :</label>
+        <select class="form-select">
+          <option value="20" selected>20 millimeters (mm)</option>
+          <option value="25">25 millimeters (mm)</option>
+          <option value="32">32 millimeters (mm)</option>
+          <option value="40">40 millimeters (mm)</option>
+          <option value="50">50 millimeters (mm)</option>
+        </select>
+
+      </div>
+      <div class="mb-3">
+        <label for="recipient-name" class="col-form-label">Will you irrigate today?</label>
+        <select class="form-select">
+          <option selected>Yes</option>
+          <option>No</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn waves-effect text-white" style="background-color: #f98e4c" data-bs-dismiss="modal" (click)="modalRef.hide()">
+        Close
+      </button>
+      <button type="button" class="btn waves-effect waves-light text-white" style="background-color: #054137">Save
+        changes
+      </button>
+    </div>
+  </ng-template>
+</div>
