@@ -1,14 +1,13 @@
 [build]
-  command = "CI= npm run build"
   publish = ".next"
-  functions = ".next/server/pages"
-
-[build.environment]
-  NETLIFY_NEXT_PLUGIN_SKIP = "true"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
+[build.environment]
+  NETLIFY_NEXT_PLUGIN_SKIP = "true"
+
+# Add redirects for client-side routing
 [[redirects]]
   from = "/*"
   to = "/index.html"
