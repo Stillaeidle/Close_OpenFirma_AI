@@ -1,8 +1,9 @@
-name: Frontend Deploy
+name: Deploy to Production
 
 permissions:
   contents: read
   pull-requests: write
+  deployments: write
 
 on:
   pull_request:
@@ -10,23 +11,19 @@ on:
     types: [opened, synchronize, reopened]
     paths:
       - 'frontend/**'
-  workflow_dispatch:
 
 jobs:
   deploy:
-    name: Deploy Preview
+    name: Deploy to Production
     runs-on: ubuntu-latest
     
-    if: github.event_name == 'pull_request' && github.head_ref == 'dev'
+    # Only run when PRs are approved and ready to merge
+    if: github.event.pull_request.merged == true
     
-    environment: pr-preview
+    environment: production
     
-    defaults:
-      run:
-        working-directory: frontend
-        
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
         
       - name: Setup Node.js
@@ -37,33 +34,49 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
           
       - name: Install dependencies
+        working-directory: frontend
         run: npm ci
         
-      - name: Build Next.js application
+      - name: Build for production
+        working-directory: frontend
         run: |
           export NODE_ENV=production
           npm run build
           
-      - name: Check build output structure
+      - name: Install Netlify CLI
+        run: npm install -g netlify-cli
+        
+      - name: Deploy to Netlify Production
+        working-directory: frontend
         run: |
-          echo "Checking build output structure..."
-          ls -la .next/
-          ls -la .next/server/ || echo "No server directory"
-          
-      # Deploy using nwtgck/actions-netlify with correct configuration
-      # - name: Deploy to Netlify
-      #   uses: nwtgck/actions-netlify@v2
-      #   with:
-      #     publish-dir: './frontend/.next'
-      #     production-deploy: false
-      #     github-token: ${{ secrets.GITHUB_TOKEN }}
-      #     deploy-message: "PR #${{ github.event.pull_request.number }} preview"
-      #     enable-pull-request-comment: true
-      #     enable-commit-comment: false
-      #     overwrites-pull-request-comment: true
-      #     alias: ${{ format('pr-{0}', github.event.pull_request.number) }}
-      #     # Remove functions-dir parameter as it's causing issues
-      #   env:
-      #     NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-      #     NETLIFY_SITE_ID: "f83f333e-13b8-4ad3-b5b1-0a14c9ff6232"
-      #   timeout-minutes: 5
+          # Deploy to production site
+          netlify deploy \
+            --dir=out \
+            --site="f83f333e-13b8-4ad3-b5b1-0a14c9ff6232" \
+            --auth="${{ secrets.NETLIFY_AUTH_TOKEN }}" \
+            --message="Production deployment from PR #${{ github.event.pull_request.number }}" \
+            --prod \
+            --json > deploy_output.json
+            
+          # Log deployment URL
+          DEPLOY_URL=$(cat deploy_output.json | jq -r '.url')
+          echo "Deployed to: $DEPLOY_URL"
+          echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
+        id: deploy
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+      
+      - name: Comment on PR
+        if: steps.deploy.outputs.deploy_url
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const deployUrl = '${{ steps.deploy.outputs.deploy_url }}';
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `🚀 **Production Deployment Complete**\n\nYour changes have been deployed to [close-openfirma-ai.netlify.app](${deployUrl}).`
+            });
