@@ -91,15 +91,26 @@ jobs:
         
       - name: Delete Netlify Preview Deployment
         run: |
-          echo "Deleting preview deployment for PR #${{ github.event.pull_request.number }}..."
+          echo "Cleaning up preview deployment for PR #${{ github.event.pull_request.number }}..."
           
-          # Delete the preview deployment
-          netlify deploy:delete \
-            --site="f83f333e-13b8-4ad3-b5b1-0a14c9ff6232" \
-            --auth="${{ secrets.NETLIFY_AUTH_TOKEN }}" \
-            --alias="pr-${{ github.event.pull_request.number }}"
+          # First, list deploys to find the one with our alias
+          DEPLOYS=$(netlify api listSiteDeploys \
+            --data '{"site_id":"f83f333e-13b8-4ad3-b5b1-0a14c9ff6232"}')
           
-          echo "Preview deployment deleted successfully."
+          # Find the deploy with our alias
+          DEPLOY_ID=$(echo $DEPLOYS | jq -r '.[] | select(.deploy_ssl_url | contains("pr-${{ github.event.pull_request.number }}")) | .id')
+          
+          if [ -n "$DEPLOY_ID" ]; then
+            echo "Found deployment ID: $DEPLOY_ID"
+            
+            # Delete the deployment
+            netlify api deleteSiteDeploy \
+              --data "{\"site_id\":\"f83f333e-13b8-4ad3-b5b1-0a14c9ff6232\", \"deploy_id\":\"$DEPLOY_ID\"}"
+            
+            echo "Preview deployment deleted successfully"
+          else
+            echo "No matching deployment found to delete"
+          fi
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
       
