@@ -36,44 +36,22 @@ jobs:
         working-directory: frontend
         run: npm ci
         
-      - name: Create Netlify configuration
+      - name: Build for static export
         working-directory: frontend
         run: |
-          cat > netlify.toml << 'EOF'
-          [build]
-            command = "npm run build"
-            publish = ".next"
-            base = "frontend"
-
-          [[plugins]]
-            package = "@netlify/plugin-nextjs"
-          EOF
-        
-      - name: Build and Export for Netlify
-        working-directory: frontend
-        run: |
-          # Ensure plugin is installed
-          npm install -D @netlify/plugin-nextjs
-          
           # Build Next.js app
           export NODE_ENV=production
           npm run build
           
-          # Debug - Check what was built
-          echo "=== Build output ==="
-          ls -la .next || echo "No .next directory"
-          ls -la .next/static 2>/dev/null || echo "No .next/static directory"
-      
-      # Try direct Netlify CLI approach instead of action
       - name: Install Netlify CLI
         run: npm install -g netlify-cli
         
       - name: Deploy to Netlify
         working-directory: frontend
         run: |
-          # Deploy to Netlify using CLI
+          # Deploy to Netlify using CLI with out directory
           netlify deploy \
-            --dir=.next \
+            --dir=out \
             --site="f83f333e-13b8-4ad3-b5b1-0a14c9ff6232" \
             --auth="${{ secrets.NETLIFY_AUTH_TOKEN }}" \
             --message="PR #${{ github.event.pull_request.number }} preview" \
