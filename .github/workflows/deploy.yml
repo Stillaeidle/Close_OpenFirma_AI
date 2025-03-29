@@ -54,9 +54,21 @@ jobs:
         env:
           NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
       
-      - name: Deploy to environment
-        run: |
-          echo "Deploying to ${{ github.ref == 'refs/heads/main' && 'production' || 
-                                  github.ref == 'refs/heads/release' && 'staging' || 
-                                  'development' }} environment"
-          # Deployment code placeholder
+      # - name: Deploy to environment (commented out)
+      #   run: |
+      #     echo "Deploying to ${{ github.ref == 'refs/heads/main' && 'production' || 
+      #                             github.ref == 'refs/heads/release' && 'staging' || 
+      #                             'development' }} environment"
+      #     # Add deployment steps here when ready
+      
+      # - name: Notify deployment (commented out)
+      #   uses: rtCamp/action-slack-notify@v2
+      #   env:
+      #     SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+      #     SLACK_CHANNEL: deployments
+      #     SLACK_COLOR: good
+      #     SLACK_TITLE: Frontend Deployment
+      #     SLACK_MESSAGE: 'Frontend has been deployed to ${{ github.ref == "refs/heads/main" && "production" || 
+      #                                                     github.ref == "refs/heads/release" && "staging" || 
+      #                                                     "development" }}'
+      #     SLACK_FOOTER: 'Deployed from ${{ github.repository }}'
