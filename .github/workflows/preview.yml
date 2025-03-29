@@ -3,6 +3,7 @@ name: PR Preview
 permissions:
   contents: read
   pull-requests: write
+  deployments: write
 
 on:
   pull_request:
@@ -12,11 +13,10 @@ on:
       - 'frontend/**'
 
 jobs:
-  build-preview:
-    name: Build and Deploy Preview
+  preview:
+    name: Deploy PR Preview
     runs-on: ubuntu-latest
     
-    # Only run for PRs from dev to main
     if: github.head_ref == 'dev'
     
     environment: pr-preview
@@ -36,60 +36,43 @@ jobs:
         working-directory: frontend
         run: npm ci
         
-      - name: Build preview
+      - name: Build for static export
         working-directory: frontend
         run: |
+          # Build Next.js app
           export NODE_ENV=production
-          echo "Building with NODE_ENV=production"
           npm run build
           
-      - name: Diagnostic - Check build output
-        run: |
-          echo "Frontend directory contents:"
-          ls -la frontend/
-          
-          echo "Next.js build output:"
-          ls -la frontend/.next/ || echo "No .next directory found"
-          
-          echo "Is this a static export?"
-          ls -la frontend/out/ || echo "No out directory found"
-      
-      # Use Netlify CLI for more control
       - name: Install Netlify CLI
         run: npm install -g netlify-cli
         
-      - name: Deploy preview to Netlify
+      - name: Deploy to Netlify
         working-directory: frontend
         run: |
-          echo "Starting Netlify preview deployment..."
-          
-          # Use .next directory for deployment
-          PUBLISH_DIR=".next"
-          
-          # Deploy using Netlify CLI
+          # Deploy to Netlify using CLI with out directory
           netlify deploy \
-            --dir=$PUBLISH_DIR \
+            --dir=out \
             --site="f83f333e-13b8-4ad3-b5b1-0a14c9ff6232" \
             --auth="${{ secrets.NETLIFY_AUTH_TOKEN }}" \
             --message="PR #${{ github.event.pull_request.number }} preview" \
+            --alias="pr-${{ github.event.pull_request.number }}" \
             --json > deploy_output.json
             
-          # Get the deploy URL
+          # Extract and output the deploy URL
+          cat deploy_output.json
           DEPLOY_URL=$(cat deploy_output.json | jq -r '.deploy_url')
           echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
-          
-          echo "Deployed to: $DEPLOY_URL"
-        id: netlify-deploy
+        id: deploy
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          
-      - name: Comment PR with Preview URL
-        if: steps.netlify-deploy.outputs.deploy_url != ''
+      
+      - name: Comment on PR
+        if: steps.deploy.outputs.deploy_url
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const deployUrl = '${{ steps.netlify-deploy.outputs.deploy_url }}';
+            const deployUrl = '${{ steps.deploy.outputs.deploy_url }}';
             
             github.rest.issues.createComment({
               issue_number: context.issue.number,
