@@ -64,13 +64,13 @@ jobs:
         run: |
           # Set site and deploy message based on event type
           if [[ "${{ github.event_name }}" == "push" && "${{ github.ref }}" == "refs/heads/main" ]]; then
-            NETLIFY_SITE_NAME="f83f333e-13b8-4ad3-b5b1-0a14c9ff6232"
+            NETLIFY_SITE_NAME="your-production-site-name"
             DEPLOY_MESSAGE="Production deploy from main branch"
           elif [[ "${{ github.event_name }}" == "push" && "${{ github.ref }}" == "refs/heads/release" ]]; then
             NETLIFY_SITE_NAME="your-staging-site-name"
             DEPLOY_MESSAGE="Staging deploy from release branch"
           elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            NETLIFY_SITE_NAME="your-preview-site-name"
+            NETLIFY_SITE_NAME="f83f333e-13b8-4ad3-b5b1-0a14c9ff6232"
             DEPLOY_MESSAGE="PR #${{ github.event.pull_request.number }} preview - Dev to Main"
           else
             NETLIFY_SITE_NAME="your-staging-site-name"
