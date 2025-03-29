@@ -19,7 +19,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20.19.0'
-          cache: 'npm'
+          # Removed caching directive since we don't have a lock file
 
       - name: Install dependencies
         run: npm install
@@ -30,7 +30,7 @@ jobs:
         working-directory: ./frontend
         env:
           # Add environment variables specific to preview builds
-          NEXT_PUBLIC_API_URL: ${{ secrets.PREVIEW_API_URL || '<https://api-staging.example.com>' }}
+          NEXT_PUBLIC_API_URL: ${{ secrets.PREVIEW_API_URL || 'https://api-staging.example.com' }}
 
       # Example: Deploy PR preview to Vercel (uncomment and configure as needed)
       # - name: Deploy Preview to Vercel
