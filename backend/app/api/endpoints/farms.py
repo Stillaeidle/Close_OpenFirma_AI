@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 from app.api.deps import get_db, get_current_user
 from app.core.errors import NotFoundError
 from app.schemas.farm import Farm, FarmCreate, FarmUpdate, FarmList
-from app.schemas.auth import User
+from backend.app.schemas.auth_schemas import User
 
 router = APIRouter()
 

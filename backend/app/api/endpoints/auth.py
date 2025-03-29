@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 from app.api.deps import get_db
 from app.core.config import settings
 from app.core.security import create_access_token
-from app.schemas.auth import Token, User, Login
+from backend.app.schemas.auth_schemas import Token, User, Login
 
 router = APIRouter()
 
