@@ -2,7 +2,7 @@ name: Frontend Deploy
 
 on:
   push:
-    branches: [ main, release ]  # Removed dev branch
+    branches: [ main, release ]
     paths:
       - 'frontend/**'
   workflow_dispatch:
@@ -40,8 +40,22 @@ jobs:
           export NODE_ENV=production
           echo "Building with NODE_ENV=production"
           npm run build
-        
-      # - name: Deploy to environment (commented out)
-      #   run: |
-      #     echo "Deploying to ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }} environment"
-      #     # Deployment code placeholder
+      
+      - name: Install Netlify CLI
+        run: npm install -g netlify-cli
+      
+      - name: Deploy to Netlify
+        run: |
+          # Set site name based on branch
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            NETLIFY_SITE_NAME="f83f333e-13b8-4ad3-b5b1-0a14c9ff6232"
+          else
+            NETLIFY_SITE_NAME="your-staging-site-name"
+          fi
+          
+          echo "Deploying to Netlify site: $NETLIFY_SITE_NAME"
+          
+          # Deploy the site
+          netlify deploy --dir=.next --prod --site=$NETLIFY_SITE_NAME --auth=${{ secrets.NETLIFY_AUTH_TOKEN }}
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
