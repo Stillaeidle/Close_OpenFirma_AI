@@ -39,9 +39,6 @@ jobs:
       - name: Type check
         run: npx tsc --noEmit
         
-      # Removed the test step since no test script exists
-      # If you want tests later, add "test": "jest" or similar to package.json
-        
       - name: Build
         run: npm run build
         
