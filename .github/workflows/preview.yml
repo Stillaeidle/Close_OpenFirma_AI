@@ -1,9 +1,8 @@
 name: PR Preview
 
-# Add permissions at the top level
 permissions:
   contents: read
-  pull-requests: write  # Explicitly grant permission to write to PRs
+  pull-requests: write
 
 on:
   pull_request:
@@ -39,7 +38,6 @@ jobs:
         env:
           NEXT_PUBLIC_API_URL: ${{ secrets.PREVIEW_API_URL || 'https://api-staging.example.com' }}
 
-      # Placeholder for deployment step
       - name: Deploy preview
         id: deploy-preview
         run: |
@@ -62,28 +60,6 @@ jobs:
                 body: `📝 Frontend preview deployment is ready! Check it out at: ${deploymentUrl}`
               });
             }
-            
-      # Create Lighthouse config file inline
-      - name: Create Lighthouse config
-        run: |
-          mkdir -p .github
-          cat > .github/lighthouse-config.json << 'EOL'
-          {
-            "ci": {
-              "collect": {
-                "numberOfRuns": 1
-              },
-              "assert": {
-                "assertions": {
-                  "categories:performance": ["warn", {"minScore": 0.5}],
-                  "categories:accessibility": ["warn", {"minScore": 0.8}],
-                  "categories:best-practices": ["warn", {"minScore": 0.8}],
-                  "categories:seo": ["warn", {"minScore": 0.8}]
-                }
-              }
-            }
-          }
-          EOL
             
       - name: Check Lighthouse scores
         uses: treosh/lighthouse-ci-action@v9
