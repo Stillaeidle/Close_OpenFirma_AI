@@ -59,19 +59,4 @@ const Button: React.FC<ButtonProps> = ({
   );
 };
 
-// Add this to your globals.css or as a style tag
-const ButtonStyles = () => (
-  <style jsx global>{`
-    @keyframes shine {
-      100% {
-        transform: translateX(100%) skew(-12deg);
-      }
-    }
-    
-    .animate-shine {
-      animation: shine 0.85s ease;
-    }
-  `}</style>
-);
-
 export default Button;
