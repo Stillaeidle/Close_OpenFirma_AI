@@ -1,13 +1,13 @@
 [build]
-  publish = ".next"
-
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
+  base = "frontend"
+  command = "npm run build"
+  publish = "out"
 
 [build.environment]
-  NETLIFY_NEXT_PLUGIN_SKIP = "true"
+  NODE_VERSION = "19"
+  NETLIFY_USE_YARN = "false"
 
-# Add redirects for client-side routing
+# Handle all routes for SPA-style navigation
 [[redirects]]
   from = "/*"
   to = "/index.html"
