@@ -21,76 +21,24 @@ jobs:
     
     environment: pr-preview
     
-    defaults:
-      run:
-        working-directory: frontend
-        
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20.19.0'
-          cache: 'npm'
-          cache-dependency-path: frontend/package-lock.json
-          
-      - name: Install dependencies
-        run: npm ci
-        
-      - name: Build
-        run: |
-          export NODE_ENV=production
-          echo "Building with NODE_ENV=production"
-          npm run build
-      
-      - name: Install Netlify CLI
-        run: npm install -g netlify-cli
-      
+      # Deploy using nwtgck/actions-netlify which handles Next.js correctly
       - name: Deploy to Netlify
-        id: deploy
-        run: |
-          NETLIFY_SITE_ID="f83f333e-13b8-4ad3-b5b1-0a14c9ff6232"
-          DEPLOY_MESSAGE="PR #${{ github.event.pull_request.number }} preview - Dev to Main"
-          
-          echo "Deploying to Netlify site: $NETLIFY_SITE_ID"
-          
-          # Create or ensure netlify.toml exists with correct config
-          cat > netlify.toml << 'EOL'
-          [build]
-            publish = ".next"
-            command = "npm run build"
-            base = "frontend"  # Specify the base directory
-
-          [[plugins]]
-            package = "@netlify/plugin-nextjs"
-          EOL
-          
-          # Run deploy and capture the output to get the deploy URL
-          DEPLOY_OUTPUT=$(netlify deploy --dir=.next --message="$DEPLOY_MESSAGE" --site=$NETLIFY_SITE_ID --auth=${{ secrets.NETLIFY_AUTH_TOKEN }} --json)
-          
-          # Extract the deploy URL from the JSON output
-          DEPLOY_URL=$(echo $DEPLOY_OUTPUT | jq -r .deploy_url)
-          
-          # Save the URL as an output for the next step
-          echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
-          
-          echo "Preview deployed to: $DEPLOY_URL"
+        uses: nwtgck/actions-netlify@v2
+        with:
+          publish-dir: './frontend/.next'
+          production-deploy: false
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: "PR #${{ github.event.pull_request.number }} preview"
+          enable-pull-request-comment: true
+          enable-commit-comment: false
+          overwrites-pull-request-comment: true
+          alias: ${{ format('pr-{0}', github.event.pull_request.number) }}
+          functions-dir: './frontend/.next/server/pages'
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-      
-      - name: Comment on PR with Netlify URL
-        if: steps.deploy.outputs.deploy_url != ''
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const deployUrl = '${{ steps.deploy.outputs.deploy_url }}';
-            
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: `🚀 PR Preview deployed to: [Netlify Preview](${deployUrl})`
-            });
+          NETLIFY_SITE_ID: "f83f333e-13b8-4ad3-b5b1-0a14c9ff6232"
+        timeout-minutes: 5
