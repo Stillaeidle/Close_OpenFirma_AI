@@ -2,10 +2,10 @@ name: Frontend Deploy
 
 on:
   push:
-    branches: [ main, release ]
+    branches: [ main, release ]  # Removed dev branch
     paths:
       - 'frontend/**'
-  workflow_dispatch:
+  workflow_dispatch:  # Manual trigger option
 
 jobs:
   deploy:
@@ -14,9 +14,7 @@ jobs:
     
     # Set environment based on branch
     environment:
-      ${{ github.ref == 'refs/heads/main' && 'production' || 
-          github.ref == 'refs/heads/release' && 'staging' || 
-          github.ref == 'refs/heads/dev' && 'development' }}
+      ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
     
     defaults:
       run:
@@ -38,20 +36,18 @@ jobs:
         
       - name: Build
         run: |
-          # Always use standard NODE_ENV values
+          # Always use standard NODE_ENV value for Next.js
           export NODE_ENV=production
           echo "Building with NODE_ENV=production"
-          
           npm run build
         env:
+          # Environment-specific API URL based on branch
           NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
       
       # - name: Deploy to environment (commented out)
       #   run: |
-      #     echo "Deploying to ${{ github.ref == 'refs/heads/main' && 'production' || 
-      #                             github.ref == 'refs/heads/release' && 'staging' || 
-      #                             'development' }} environment"
-      #     # Add deployment steps here when ready
+      #     echo "Deploying to ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }} environment"
+      #     # Deployment code placeholder
       
       # - name: Notify deployment (commented out)
       #   uses: rtCamp/action-slack-notify@v2
@@ -60,7 +56,5 @@ jobs:
       #     SLACK_CHANNEL: deployments
       #     SLACK_COLOR: good
       #     SLACK_TITLE: Frontend Deployment
-      #     SLACK_MESSAGE: 'Frontend has been deployed to ${{ github.ref == "refs/heads/main" && "production" || 
-      #                                                     github.ref == "refs/heads/release" && "staging" || 
-      #                                                     "development" }}'
+      #     SLACK_MESSAGE: 'Frontend has been deployed to ${{ github.ref == "refs/heads/main" && "production" || "staging" }}'
       #     SLACK_FOOTER: 'Deployed from ${{ github.repository }}'
