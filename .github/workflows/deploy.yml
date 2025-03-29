@@ -11,13 +11,13 @@ jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
-
+    
     # Set environment based on branch
     environment:
-      ${{ github.ref == 'refs/heads/main' && 'production' ||
-          github.ref == 'refs/heads/release' && 'staging' ||
+      ${{ github.ref == 'refs/heads/main' && 'production' || 
+          github.ref == 'refs/heads/release' && 'staging' || 
           github.ref == 'refs/heads/dev' && 'development' }}
-
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -26,7 +26,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20.19.0'
-          cache: 'npm'
+          # Removed caching directive since we don't have a lock file
 
       - name: Install dependencies
         run: npm install
@@ -37,10 +37,10 @@ jobs:
         working-directory: ./frontend
         env:
           # Set NODE_ENV based on the branch
-          NODE_ENV: ${{ github.ref == 'refs/heads/main' && 'production' ||
-                        github.ref == 'refs/heads/release' && 'staging' ||
+          NODE_ENV: ${{ github.ref == 'refs/heads/main' && 'production' || 
+                        github.ref == 'refs/heads/release' && 'staging' || 
                         github.ref == 'refs/heads/dev' && 'development' }}
-
+      
       # Deployment to Vercel example (uncomment and configure as needed)
       # - name: Deploy to Vercel
       #   if: success()
@@ -60,12 +60,12 @@ jobs:
       #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
       #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       #     aws-region: us-east-1
-      #
+      # 
       # - name: Deploy to S3
       #   run: |
       #     export ENV_NAME=${{ github.ref == 'refs/heads/main' && 'prod' || github.ref == 'refs/heads/release' && 'staging' || 'dev' }}
       #     aws s3 sync frontend/.next s3://your-bucket-name-${ENV_NAME}/ --delete
-      #
+      # 
       # - name: Invalidate CloudFront cache
       #   run: |
       #     export ENV_NAME=${{ github.ref == 'refs/heads/main' && 'prod' || github.ref == 'refs/heads/release' && 'staging' || 'dev' }}
