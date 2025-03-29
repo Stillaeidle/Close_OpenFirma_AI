@@ -23,19 +23,15 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20.19.0'
-          cache: 'npm'
+          # No caching option at all
 
-      - name: Install dependencies
-        run: npm install
-        working-directory: ./frontend
-
-      - name: Run ESLint
-        run: npm run lint
-        working-directory: ./frontend
-
-      - name: Type check
-        run: npx tsc --noEmit
-        working-directory: ./frontend
+      # Change directory first, then do all operations
+      - name: Change to frontend directory and install dependencies
+        run: |
+          cd frontend
+          npm install
+          npm run lint
+          npx tsc --noEmit
 
   build:
     name: Build
@@ -50,15 +46,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20.19.0'
-          cache: 'npm'
+          # No caching option at all
 
-      - name: Install dependencies
-        run: npm install
-        working-directory: ./frontend
-
-      - name: Build Next.js application
-        run: npm run build
-        working-directory: ./frontend
+      # Change directory first, then do all operations
+      - name: Change to frontend directory, install and build
+        run: |
+          cd frontend
+          npm install
+          npm run build
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4

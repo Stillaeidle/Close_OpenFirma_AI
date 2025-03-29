@@ -11,13 +11,13 @@ jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
-
+    
     # Set environment based on branch
     environment:
-      ${{ github.ref == 'refs/heads/main' && 'production' ||
-          github.ref == 'refs/heads/release' && 'staging' ||
+      ${{ github.ref == 'refs/heads/main' && 'production' || 
+          github.ref == 'refs/heads/release' && 'staging' || 
           github.ref == 'refs/heads/dev' && 'development' }}
-
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -26,47 +26,44 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20.19.0'
-          cache: 'npm'
+          # No caching option at all
 
-      - name: Install dependencies
-        run: npm install
-        working-directory: ./frontend
-
-      - name: Build Next.js application
-        run: npm run build
-        working-directory: ./frontend
-        env:
-          # Set NODE_ENV based on the branch
-          NODE_ENV: ${{ github.ref == 'refs/heads/main' && 'production' ||
-                        github.ref == 'refs/heads/release' && 'staging' ||
-                        github.ref == 'refs/heads/dev' && 'development' }}
-
-      # Deployment to Vercel example (uncomment and configure as needed)
-      # - name: Deploy to Vercel
-      #   if: success()
-      #   uses: amondnet/vercel-action@v25
-      #   with:
-      #     vercel-token: ${{ secrets.VERCEL_TOKEN }}
-      #     vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-      #     vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-      #     working-directory: ./frontend
-      #     vercel-args: ${{ github.ref == 'refs/heads/main' && '--prod' || '' }}
-
-      # Deployment to AWS S3/CloudFront example (uncomment and configure as needed)
-      # - name: Configure AWS credentials
-      #   if: success()
-      #   uses: aws-actions/configure-aws-credentials@v4
-      #   with:
-      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #     aws-region: us-east-1
-      #
-      # - name: Deploy to S3
+      # Change directory first, then do all operations in a single step
+      - name: Build frontend application
+        run: |
+          cd frontend
+          npm install
+          
+          # Set NODE_ENV based on branch
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            export NODE_ENV=production
+          elif [[ "${{ github.ref }}" == "refs/heads/release" ]]; then
+            export NODE_ENV=staging
+          else
+            export NODE_ENV=development
+          fi
+          
+          echo "Building with NODE_ENV=$NODE_ENV"
+          npm run build
+      
+      # Deployment steps would go here
+      # Make sure deployment commands also use the cd frontend approach
+      # For example:
+      
+      # - name: Deploy to production (example)
+      #   if: github.ref == 'refs/heads/main'
       #   run: |
-      #     export ENV_NAME=${{ github.ref == 'refs/heads/main' && 'prod' || github.ref == 'refs/heads/release' && 'staging' || 'dev' }}
-      #     aws s3 sync frontend/.next s3://your-bucket-name-${ENV_NAME}/ --delete
-      #
-      # - name: Invalidate CloudFront cache
+      #     cd frontend
+      #     # Deploy command for production
+      
+      # - name: Deploy to staging (example)
+      #   if: github.ref == 'refs/heads/release'
       #   run: |
-      #     export ENV_NAME=${{ github.ref == 'refs/heads/main' && 'prod' || github.ref == 'refs/heads/release' && 'staging' || 'dev' }}
-      #     aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID_PREFIX }}_${ENV_NAME} --paths "/*"
+      #     cd frontend
+      #     # Deploy command for staging
+      
+      # - name: Deploy to development (example)
+      #   if: github.ref == 'refs/heads/dev'
+      #   run: |
+      #     cd frontend
+      #     # Deploy command for development

@@ -19,26 +19,22 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20.19.0'
-          cache: 'npm'
+          # No caching option at all
 
-      - name: Install dependencies
-        run: npm install
-        working-directory: ./frontend
+      # Change directory first, then do all operations in a single step
+      - name: Build preview
+        run: |
+          cd frontend
+          npm install
+          
+          # Set preview environment variables
+          export NEXT_PUBLIC_API_URL="${{ secrets.PREVIEW_API_URL || 'https://api-staging.example.com' }}"
+          
+          echo "Building preview with NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL"
+          npm run build
 
-      - name: Build Next.js application
-        run: npm run build
-        working-directory: ./frontend
-        env:
-          # Add environment variables specific to preview builds
-          NEXT_PUBLIC_API_URL: ${{ secrets.PREVIEW_API_URL || '<https://api-staging.example.com>' }}
-
-      # Example: Deploy PR preview to Vercel (uncomment and configure as needed)
-      # - name: Deploy Preview to Vercel
-      #   uses: amondnet/vercel-action@v25
-      #   with:
-      #     vercel-token: ${{ secrets.VERCEL_TOKEN }}
-      #     vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-      #     vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-      #     working-directory: ./frontend
-      #     github-token: ${{ secrets.GITHUB_TOKEN }}
-      #     github-comment: true
+      # Add deployment steps if needed
+      # - name: Deploy preview (example)
+      #   run: |
+      #     cd frontend
+      #     # Deploy command for preview
