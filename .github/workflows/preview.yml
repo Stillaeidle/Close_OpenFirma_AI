@@ -38,34 +38,34 @@ jobs:
         env:
           NEXT_PUBLIC_API_URL: ${{ secrets.PREVIEW_API_URL || 'https://api-staging.example.com' }}
 
-      - name: Deploy preview
-        id: deploy-preview
-        run: |
-          # Deployment code would go here
-          echo "preview-url=https://preview-url.example.com/${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+      # - name: Deploy preview (commented out)
+      #   id: deploy-preview
+      #   run: |
+      #     # Deployment code would go here
+      #     echo "preview-url=https://preview-url.example.com/${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
           
-      - name: Comment PR with Preview URL
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { issue: { number: issue_number }, repo: { owner, repo } } = context;
-            const deploymentUrl = '${{ steps.deploy-preview.outputs.preview-url }}';
+      # - name: Comment PR with Preview URL (commented out)
+      #   uses: actions/github-script@v6
+      #   with:
+      #     github-token: ${{ secrets.GITHUB_TOKEN }}
+      #     script: |
+      #       const { issue: { number: issue_number }, repo: { owner, repo } } = context;
+      #       const deploymentUrl = '${{ steps.deploy-preview.outputs.preview-url }}';
+      #       
+      #       if (deploymentUrl) {
+      #         github.rest.issues.createComment({
+      #           issue_number,
+      #           owner,
+      #           repo,
+      #           body: `📝 Frontend preview deployment is ready! Check it out at: ${deploymentUrl}`
+      #         });
+      #       }
             
-            if (deploymentUrl) {
-              github.rest.issues.createComment({
-                issue_number,
-                owner,
-                repo,
-                body: `📝 Frontend preview deployment is ready! Check it out at: ${deploymentUrl}`
-              });
-            }
-            
-      - name: Check Lighthouse scores
-        uses: treosh/lighthouse-ci-action@v9
-        with:
-          urls: |
-            ${{ steps.deploy-preview.outputs.preview-url || 'https://preview-url.example.com' }}
-          uploadArtifacts: true
-          temporaryPublicStorage: true
-          configPath: '.github/lighthouse-config.json'
+      # - name: Check Lighthouse scores (commented out)
+      #   uses: treosh/lighthouse-ci-action@v9
+      #   with:
+      #     urls: |
+      #       ${{ steps.deploy-preview.outputs.preview-url || 'https://preview-url.example.com' }}
+      #     uploadArtifacts: true
+      #     temporaryPublicStorage: true
+      #     configPath: '.github/lighthouse-config.json'
