@@ -1,0 +1,15 @@
+.swagger-ui .topbar {
+  background-color: #2C3E50;
+}
+
+.swagger-ui .info .title {
+  color: #2C3E50;
+}
+
+.swagger-ui .btn.execute {
+  background-color: #27AE60;
+}
+
+.swagger-ui .info .title small.version-stamp {
+  background-color: #27AE60;
+}
