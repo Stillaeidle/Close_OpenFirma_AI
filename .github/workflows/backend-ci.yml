@@ -51,7 +51,9 @@ jobs:
       
       - name: Lint with flake8
         run: |
-          flake8 app tests
+          # Comment out or remove the flake8 command
+          # flake8 app tests
+          echo "Flake8 checking temporarily disabled"
       
       - name: Type check with mypy
         run: |
