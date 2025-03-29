@@ -47,7 +47,7 @@ const Button: React.FC<ButtonProps> = ({
       onClick={onClick}
       disabled={disabled}
     >
-      {/* Animated shine effect */}
+      {/* Animated shine effect - added with CSS */}
       <span className="absolute top-0 left-0 w-full h-full bg-white/30 transform -translate-x-full skew-x-12 group-hover:animate-shine"></span>
       
       {/* Button content with optional icon */}
@@ -59,19 +59,5 @@ const Button: React.FC<ButtonProps> = ({
   );
 };
 
-// Add this to your globals.css or as a style tag
-const ButtonStyles = () => (
-  <style jsx global>{`
-    @keyframes shine {
-      100% {
-        transform: translateX(100%) skew(-12deg);
-      }
-    }
-    
-    .animate-shine {
-      animation: shine 0.85s ease;
-    }
-  `}</style>
-);
 
 export default Button;

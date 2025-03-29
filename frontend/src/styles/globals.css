@@ -25,3 +25,13 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+@keyframes shine {
+  100% {
+    transform: translateX(100%) skew(-12deg);
+  }
+}
+
+.animate-shine {
+  animation: shine 0.85s ease;
+}
