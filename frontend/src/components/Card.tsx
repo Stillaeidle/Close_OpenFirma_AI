@@ -14,5 +14,4 @@ const Card: React.FC<CardProps> = ({ title, description }) => {
   );
 };
 
-
 export default Card;
