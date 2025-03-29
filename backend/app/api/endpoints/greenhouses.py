@@ -12,7 +12,7 @@ from app.schemas.greenhouse import (
     Greenhouse, GreenhouseCreate, GreenhouseUpdate, GreenhouseList,
     Planting, PlantingCreate, PlantingUpdate, PlantingList
 )
-from backend.app.schemas.auth_schemas import User
+from app.schemas.auth_schemas import User
 
 router = APIRouter()
 
