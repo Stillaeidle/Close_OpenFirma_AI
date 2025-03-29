@@ -8,7 +8,7 @@ permissions:
 on:
   pull_request:
     branches: [ main ]
-    types: [opened, synchronize, reopened]
+    types: [opened, synchronize, reopened, closed]
     paths:
       - 'frontend/**'
 
@@ -17,7 +17,8 @@ jobs:
     name: Deploy PR Preview
     runs-on: ubuntu-latest
     
-    if: github.head_ref == 'dev'
+    # Only deploy if PR is open and coming from dev branch
+    if: github.event.action != 'closed' && github.head_ref == 'dev'
     
     environment: pr-preview
     
@@ -39,7 +40,6 @@ jobs:
       - name: Build for static export
         working-directory: frontend
         run: |
-          # Build Next.js app
           export NODE_ENV=production
           npm run build
           
@@ -49,7 +49,6 @@ jobs:
       - name: Deploy to Netlify
         working-directory: frontend
         run: |
-          # Deploy to Netlify using CLI with out directory
           netlify deploy \
             --dir=out \
             --site="f83f333e-13b8-4ad3-b5b1-0a14c9ff6232" \
@@ -58,8 +57,6 @@ jobs:
             --alias="pr-${{ github.event.pull_request.number }}" \
             --json > deploy_output.json
             
-          # Extract and output the deploy URL
-          cat deploy_output.json
           DEPLOY_URL=$(cat deploy_output.json | jq -r '.deploy_url')
           echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
         id: deploy
@@ -79,4 +76,41 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: `🚀 PR Preview deployed to: [Netlify Preview](${deployUrl})`
+            });
+
+  cleanup:
+    name: Cleanup PR Preview
+    runs-on: ubuntu-latest
+    
+    # Only run when PR is closed (includes merged)
+    if: github.event.action == 'closed'
+    
+    steps:
+      - name: Install Netlify CLI
+        run: npm install -g netlify-cli
+        
+      - name: Delete Netlify Preview Deployment
+        run: |
+          echo "Deleting preview deployment for PR #${{ github.event.pull_request.number }}..."
+          
+          # Delete the preview deployment
+          netlify deploy:delete \
+            --site="f83f333e-13b8-4ad3-b5b1-0a14c9ff6232" \
+            --auth="${{ secrets.NETLIFY_AUTH_TOKEN }}" \
+            --alias="pr-${{ github.event.pull_request.number }}"
+          
+          echo "Preview deployment deleted successfully."
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+      
+      - name: Comment on PR
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `🧹 Preview deployment has been cleaned up.`
             });
