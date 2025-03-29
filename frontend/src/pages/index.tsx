@@ -1,5 +1,6 @@
 import Head from 'next/head';
 import Card from '../components/Card';
+import Button from '../components/Button';
 
 export default function Home() {
   return (
@@ -14,7 +15,11 @@ export default function Home() {
         <h1 className="text-4xl font-bold text-center text-gray-800 mb-12">
           Welcome to Next.js with TypeScript and Tailwind CSS
         </h1>
-
+        <Button
+          text="Click Me"
+          variant="primary"
+          onClick={() => console.log('Button clicked!')}
+        />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <Card
             title="Next.js 15.2.4"
