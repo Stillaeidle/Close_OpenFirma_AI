@@ -113,3 +113,9 @@ Thumbs.db
 .DS_Store
 # Local Netlify folder
 .netlify
+
+# API Documentation static files
+/backend/static/swagger-ui.css
+/backend/static/swagger-ui-bundle.js
+/backend/static/redoc.standalone.js
+/backend/static/favicon.png
