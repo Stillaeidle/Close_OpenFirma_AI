@@ -1,5 +1,9 @@
 name: PR Preview
 
+permissions:
+  contents: read
+  pull-requests: write
+
 on:
   pull_request:
     types: [opened, synchronize, reopened]
@@ -8,33 +12,60 @@ on:
 
 jobs:
   build-preview:
-    name: Build PR Preview
+    name: Build and Deploy Preview
     runs-on: ubuntu-latest
-
+    
+    defaults:
+      run:
+        working-directory: frontend
+        
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Set up Node.js
+        
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20.19.0'
-          # No caching option at all
-
-      # Change directory first, then do all operations in a single step
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+          
+      - name: Install dependencies
+        run: npm ci
+        
       - name: Build preview
-        run: |
-          cd frontend
-          npm install
-          
-          # Set preview environment variables
-          export NEXT_PUBLIC_API_URL="${{ secrets.PREVIEW_API_URL || 'https://api-staging.example.com' }}"
-          
-          echo "Building preview with NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL"
-          npm run build
+        run: npm run build
+        env:
+          NEXT_PUBLIC_API_URL: ${{ secrets.PREVIEW_API_URL || 'https://api-staging.example.com' }}
 
-      # Add deployment steps if needed
-      # - name: Deploy preview (example)
+      # - name: Deploy preview (commented out)
+      #   id: deploy-preview
       #   run: |
-      #     cd frontend
-      #     # Deploy command for preview
+      #     # Deployment code would go here
+      #     echo "preview-url=https://preview-url.example.com/${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+          
+      # - name: Comment PR with Preview URL (commented out)
+      #   uses: actions/github-script@v6
+      #   with:
+      #     github-token: ${{ secrets.GITHUB_TOKEN }}
+      #     script: |
+      #       const { issue: { number: issue_number }, repo: { owner, repo } } = context;
+      #       const deploymentUrl = '${{ steps.deploy-preview.outputs.preview-url }}';
+      #       
+      #       if (deploymentUrl) {
+      #         github.rest.issues.createComment({
+      #           issue_number,
+      #           owner,
+      #           repo,
+      #           body: `📝 Frontend preview deployment is ready! Check it out at: ${deploymentUrl}`
+      #         });
+      #       }
+            
+      # - name: Check Lighthouse scores (commented out)
+      #   uses: treosh/lighthouse-ci-action@v9
+      #   with:
+      #     urls: |
+      #       ${{ steps.deploy-preview.outputs.preview-url || 'https://preview-url.example.com' }}
+      #     uploadArtifacts: true
+      #     temporaryPublicStorage: true
+      #     configPath: '.github/lighthouse-config.json'
