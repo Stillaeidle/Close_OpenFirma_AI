@@ -1,42 +1,25 @@
 name: Frontend Deploy
 
-# Add explicit permissions at the workflow level
 permissions:
   contents: read
-  pull-requests: write  # Required for commenting on PRs
+  pull-requests: write
 
 on:
-  # Keep existing push triggers
-  push:
-    branches: [ main, release ]
-    paths:
-      - 'frontend/**'
-  
-  # Add pull request trigger
   pull_request:
-    branches: [ main ]  # Only PRs targeting main branch
+    branches: [ main ]
     types: [opened, synchronize, reopened]
     paths:
       - 'frontend/**'
-  
-  # Keep manual trigger
   workflow_dispatch:
 
 jobs:
   deploy:
-    name: Deploy
+    name: Deploy Preview
     runs-on: ubuntu-latest
     
-    # Only run for pushes to main/release OR for PRs from dev to main
-    if: >
-      github.event_name == 'push' || 
-      (github.event_name == 'pull_request' && github.head_ref == 'dev')
+    if: github.event_name == 'pull_request' && github.head_ref == 'dev'
     
-    # Set environment based on event type and branch
-    environment:
-      ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && 'production' || 
-          github.event_name == 'push' && github.ref == 'refs/heads/release' && 'staging' ||
-          github.event_name == 'pull_request' && 'pr-preview' }}
+    environment: pr-preview
     
     defaults:
       run:
@@ -66,46 +49,48 @@ jobs:
         run: npm install -g netlify-cli
       
       - name: Deploy to Netlify
+        id: deploy
         run: |
-          # Set site and deploy message based on event type
-          if [[ "${{ github.event_name }}" == "push" && "${{ github.ref }}" == "refs/heads/main" ]]; then
-            NETLIFY_SITE_NAME="your-production-site-name"
-            DEPLOY_MESSAGE="Production deploy from main branch"
-          elif [[ "${{ github.event_name }}" == "push" && "${{ github.ref }}" == "refs/heads/release" ]]; then
-            NETLIFY_SITE_NAME="your-staging-site-name"
-            DEPLOY_MESSAGE="Staging deploy from release branch"
-          elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            NETLIFY_SITE_NAME="f83f333e-13b8-4ad3-b5b1-0a14c9ff6232"
-            DEPLOY_MESSAGE="PR #${{ github.event.pull_request.number }} preview - Dev to Main"
-          else
-            NETLIFY_SITE_NAME="your-staging-site-name"
-            DEPLOY_MESSAGE="Manual deployment"
-          fi
+          NETLIFY_SITE_ID="f83f333e-13b8-4ad3-b5b1-0a14c9ff6232"
+          DEPLOY_MESSAGE="PR #${{ github.event.pull_request.number }} preview - Dev to Main"
           
-          echo "Deploying to Netlify site: $NETLIFY_SITE_NAME"
+          echo "Deploying to Netlify site: $NETLIFY_SITE_ID"
           
-          # For PR, do a draft deploy. For push to main/release, do a production deploy
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            netlify deploy --dir=.next --message="$DEPLOY_MESSAGE" --site=$NETLIFY_SITE_NAME --auth=${{ secrets.NETLIFY_AUTH_TOKEN }}
-          else
-            netlify deploy --dir=.next --prod --message="$DEPLOY_MESSAGE" --site=$NETLIFY_SITE_NAME --auth=${{ secrets.NETLIFY_AUTH_TOKEN }}
-          fi
+          # Create or ensure netlify.toml exists with correct config
+          cat > netlify.toml << 'EOL'
+          [build]
+            publish = ".next"
+            command = "npm run build"
+            base = "frontend"  # Specify the base directory
+
+          [[plugins]]
+            package = "@netlify/plugin-nextjs"
+          EOL
+          
+          # Run deploy and capture the output to get the deploy URL
+          DEPLOY_OUTPUT=$(netlify deploy --dir=.next --message="$DEPLOY_MESSAGE" --site=$NETLIFY_SITE_ID --auth=${{ secrets.NETLIFY_AUTH_TOKEN }} --json)
+          
+          # Extract the deploy URL from the JSON output
+          DEPLOY_URL=$(echo $DEPLOY_OUTPUT | jq -r .deploy_url)
+          
+          # Save the URL as an output for the next step
+          echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
+          
+          echo "Preview deployed to: $DEPLOY_URL"
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
       
-      # Add step to comment on the PR with the preview URL (for PRs only)
       - name: Comment on PR with Netlify URL
-        if: github.event_name == 'pull_request'
+        if: steps.deploy.outputs.deploy_url != ''
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            // Extract deploy URL from previous step (you might need to capture this from the Netlify CLI output)
-            const deployUrl = 'https://pr-${{ github.event.pull_request.number }}--your-preview-site-name.netlify.app';
+            const deployUrl = '${{ steps.deploy.outputs.deploy_url }}';
             
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `🚀 PR Preview deployed to: [${deployUrl}](${deployUrl})`
+              body: `🚀 PR Preview deployed to: [Netlify Preview](${deployUrl})`
             });
