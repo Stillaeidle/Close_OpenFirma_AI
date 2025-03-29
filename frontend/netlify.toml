@@ -1,6 +1,11 @@
 [build]
   command = "npm run build"
   publish = ".next"
+  base = "frontend"  # Important! Tells Netlify where your project is
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
+
+[build.environment]
+  NETLIFY_NEXT_PLUGIN_SKIP = "true"
+  NODE_VERSION = "20.19.0"
