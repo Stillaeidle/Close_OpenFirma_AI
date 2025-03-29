@@ -21,11 +21,36 @@ jobs:
     
     environment: pr-preview
     
+    defaults:
+      run:
+        working-directory: frontend
+        
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         
-      # Deploy using nwtgck/actions-netlify which handles Next.js correctly
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.19.0'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Build Next.js application
+        run: |
+          export NODE_ENV=production
+          npm run build
+          
+      - name: Check build output structure
+        run: |
+          echo "Checking build output structure..."
+          ls -la .next/
+          ls -la .next/server/ || echo "No server directory"
+          
+      # Deploy using nwtgck/actions-netlify with correct configuration
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v2
         with:
@@ -37,7 +62,7 @@ jobs:
           enable-commit-comment: false
           overwrites-pull-request-comment: true
           alias: ${{ format('pr-{0}', github.event.pull_request.number) }}
-          functions-dir: './frontend/.next/server/pages'
+          # Remove functions-dir parameter as it's causing issues
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: "f83f333e-13b8-4ad3-b5b1-0a14c9ff6232"
