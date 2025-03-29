@@ -38,17 +38,9 @@ jobs:
         
       - name: Build
         run: |
-          # Set NODE_ENV based on branch
-          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-            export NODE_ENV=production
-            echo "Building with NODE_ENV=production"
-          elif [[ "${{ github.ref }}" == "refs/heads/release" ]]; then
-            export NODE_ENV=production
-            echo "Building with NODE_ENV=production (for staging)"
-          else
-            export NODE_ENV=production
-            echo "Building with NODE_ENV=production (for development)"
-          fi
+          # Always use standard NODE_ENV values
+          export NODE_ENV=production
+          echo "Building with NODE_ENV=production"
           
           npm run build
         env:
