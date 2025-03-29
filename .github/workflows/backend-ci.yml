@@ -57,7 +57,7 @@ jobs:
       
       - name: Type check with mypy
         run: |
-          mypy app
+          mypy --explicit-package-bases app
       
       - name: Run tests
         run: |
