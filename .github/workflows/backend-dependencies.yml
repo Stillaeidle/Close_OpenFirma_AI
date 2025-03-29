@@ -1,0 +1,66 @@
+name: Update Backend Dependencies
+
+on:
+  schedule:
+    - cron: '0 0 * * 1' # Run weekly on Mondays
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  update-dependencies:
+    name: Check for backend dependency updates
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Install pip-tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install pip-tools
+      
+      - name: Create updated requirements
+        run: |
+          cd backend
+          
+          # Save current requirements
+          cp requirements.txt requirements.txt.old
+          
+          # Create a temp requirements.in file by removing versions from requirements.txt
+          grep -v "^#" requirements.txt | sed 's/==.*//g' | sed 's/>.*//g' > requirements.in
+          
+          # Compile new requirements
+          pip-compile requirements.in --output-file requirements.txt.new
+          
+          # Compare files
+          if ! diff -q requirements.txt requirements.txt.new >/dev/null; then
+            mv requirements.txt.new requirements.txt
+            echo "DEPS_UPDATED=true" >> $GITHUB_ENV
+          else
+            echo "No dependency updates found"
+            rm requirements.txt.new requirements.in
+          fi
+      
+      - name: Create PR for updated dependencies
+        if: env.DEPS_UPDATED == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore(deps): update backend dependencies'
+          branch: automated-backend-dependency-updates
+          delete-branch: true
+          title: 'Update backend dependencies'
+          body: |
+            This PR updates the backend Python dependencies to the latest versions.
+            - Automated using GitHub Actions
+            
+            Please review and merge after testing.
+          labels: |
+            dependencies
+            automated
+            backend
+          draft: false
