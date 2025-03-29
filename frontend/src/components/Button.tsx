@@ -47,7 +47,7 @@ const Button: React.FC<ButtonProps> = ({
       onClick={onClick}
       disabled={disabled}
     >
-      {/* Animated shine effect */}
+      {/* Animated shine effect - added with CSS */}
       <span className="absolute top-0 left-0 w-full h-full bg-white/30 transform -translate-x-full skew-x-12 group-hover:animate-shine"></span>
       
       {/* Button content with optional icon */}
@@ -58,6 +58,5 @@ const Button: React.FC<ButtonProps> = ({
     </button>
   );
 };
-
 
 export default Button;
