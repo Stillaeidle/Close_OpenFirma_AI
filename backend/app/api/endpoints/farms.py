@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 from app.api.deps import get_db, get_current_user
 from app.core.errors import NotFoundError
 from app.schemas.farm import Farm, FarmCreate, FarmUpdate, FarmList
-from backend.app.schemas.auth_schemas import User
+from app.schemas.auth_schemas import User
 
 router = APIRouter()
 
@@ -48,18 +48,19 @@ def list_farms(
             is_active=True
         )
     ]
-    
+
     # Filter by name if provided
     if name:
         farms = [farm for farm in farms if name.lower() in farm.name.lower()]
-    
+
     # Filter by location if provided
     if location:
-        farms = [farm for farm in farms if location.lower() in farm.location.lower()]
-    
+        farms = [farm for farm in farms if location.lower()
+                 in farm.location.lower()]
+
     # Apply pagination
-    paginated_farms = farms[skip : skip + limit]
-    
+    paginated_farms = farms[skip: skip + limit]
+
     return FarmList(farms=paginated_farms, total=len(farms))
 
 
@@ -75,7 +76,7 @@ def create_farm(
     """
     # Generate ID if not provided
     farm_id = farm_in.id or f"farm_{str(uuid4())[:8]}"
-    
+
     # In a real app, you would create the farm in the database
     farm = Farm(
         id=farm_id,
@@ -86,7 +87,7 @@ def create_farm(
         updated_at="2025-03-29T12:00:00",
         is_active=True
     )
-    
+
     return farm
 
 
@@ -104,7 +105,7 @@ def get_farm(
     # In a real app, you would query the database
     if farm_id not in ["farm1", "farm2"]:
         raise NotFoundError(f"Farm with ID {farm_id} not found")
-    
+
     farm = Farm(
         id=farm_id,
         name=f"Demo Farm {farm_id[-1]}",
@@ -114,7 +115,7 @@ def get_farm(
         updated_at="2025-01-01T00:00:00",
         is_active=True
     )
-    
+
     return farm
 
 
@@ -132,7 +133,7 @@ def update_farm(
     # Check if farm exists
     if farm_id not in ["farm1", "farm2"]:
         raise NotFoundError(f"Farm with ID {farm_id} not found")
-    
+
     # In a real app, you would update the farm in the database
     farm = Farm(
         id=farm_id,
@@ -143,7 +144,7 @@ def update_farm(
         updated_at="2025-03-29T12:00:00",
         is_active=farm_in.is_active if farm_in.is_active is not None else True
     )
-    
+
     return farm
 
 
@@ -160,7 +161,7 @@ def delete_farm(
     # Check if farm exists
     if farm_id not in ["farm1", "farm2"]:
         raise NotFoundError(f"Farm with ID {farm_id} not found")
-    
+
     # In a real app, you would mark the farm as inactive in the database
     farm = Farm(
         id=farm_id,
@@ -171,5 +172,5 @@ def delete_farm(
         updated_at="2025-03-29T12:00:00",
         is_active=False
     )
-    
+
     return farm

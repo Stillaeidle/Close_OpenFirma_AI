@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 from app.api.deps import get_db, get_current_user
 from app.core.errors import NotFoundError, PredictionError
 from app.schemas.prediction import PredictionInput, PredictionResult, PredictionHistory
-from backend.app.schemas.auth_schemas import User
+from app.schemas.auth_schemas import User
 
 router = APIRouter()
 

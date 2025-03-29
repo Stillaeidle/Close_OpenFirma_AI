@@ -11,7 +11,7 @@ from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.core.security import ALGORITHM
 from app.db.session import SessionLocal
-from backend.app.schemas.auth_schemas import TokenPayload, User
+from app.schemas.auth_schemas import TokenPayload, User
 
 # Create OAuth2 scheme for token authentication
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
