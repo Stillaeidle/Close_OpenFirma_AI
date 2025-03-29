@@ -1,10 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     reactStrictMode: true,
-    swcMinify: true,
     
     // Enable static export for better Netlify compatibility
-    output: 'export',
+    // output: 'export',
     
     // Make sure images are handled correctly
     images: {
