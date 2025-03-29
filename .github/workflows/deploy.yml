@@ -5,7 +5,7 @@ on:
     branches: [ main, release ]  # Removed dev branch
     paths:
       - 'frontend/**'
-  workflow_dispatch:  # Manual trigger option
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -36,25 +36,12 @@ jobs:
         
       - name: Build
         run: |
-          # Always use standard NODE_ENV value for Next.js
+          # Fix: Always use production for Next.js
           export NODE_ENV=production
           echo "Building with NODE_ENV=production"
           npm run build
-        env:
-          # Environment-specific API URL based on branch
-          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
-      
+        
       # - name: Deploy to environment (commented out)
       #   run: |
       #     echo "Deploying to ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }} environment"
       #     # Deployment code placeholder
-      
-      # - name: Notify deployment (commented out)
-      #   uses: rtCamp/action-slack-notify@v2
-      #   env:
-      #     SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-      #     SLACK_CHANNEL: deployments
-      #     SLACK_COLOR: good
-      #     SLACK_TITLE: Frontend Deployment
-      #     SLACK_MESSAGE: 'Frontend has been deployed to ${{ github.ref == "refs/heads/main" && "production" || "staging" }}'
-      #     SLACK_FOOTER: 'Deployed from ${{ github.repository }}'
