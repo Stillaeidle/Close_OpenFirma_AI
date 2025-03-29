@@ -42,7 +42,7 @@ const Button: React.FC<ButtonProps> = ({
   const disabledClasses = disabled ? "opacity-50 cursor-not-allowed transform-none hover:translate-y-0" : "cursor-pointer";
   
   return (
-    <button
+    <button 
       className={`${baseClasses} ${sizeClasses[size]} ${variantClasses[variant]} ${disabledClasses} ${className} group`}
       onClick={onClick}
       disabled={disabled}
