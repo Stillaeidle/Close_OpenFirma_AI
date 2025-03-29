@@ -3,7 +3,7 @@ const nextConfig = {
     reactStrictMode: true,
     
     // Enable static export for better Netlify compatibility
-    // output: 'export',
+    output: 'export',
     
     // Make sure images are handled correctly
     images: {
