@@ -1,5 +1,10 @@
 name: Frontend Deploy
 
+# Add explicit permissions at the workflow level
+permissions:
+  contents: read
+  pull-requests: write  # Required for commenting on PRs
+
 on:
   # Keep existing push triggers
   push:
