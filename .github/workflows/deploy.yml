@@ -51,19 +51,19 @@ jobs:
           ls -la .next/server/ || echo "No server directory"
           
       # Deploy using nwtgck/actions-netlify with correct configuration
-      - name: Deploy to Netlify
-        uses: nwtgck/actions-netlify@v2
-        with:
-          publish-dir: './frontend/.next'
-          production-deploy: false
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          deploy-message: "PR #${{ github.event.pull_request.number }} preview"
-          enable-pull-request-comment: true
-          enable-commit-comment: false
-          overwrites-pull-request-comment: true
-          alias: ${{ format('pr-{0}', github.event.pull_request.number) }}
-          # Remove functions-dir parameter as it's causing issues
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: "f83f333e-13b8-4ad3-b5b1-0a14c9ff6232"
-        timeout-minutes: 5
+      # - name: Deploy to Netlify
+      #   uses: nwtgck/actions-netlify@v2
+      #   with:
+      #     publish-dir: './frontend/.next'
+      #     production-deploy: false
+      #     github-token: ${{ secrets.GITHUB_TOKEN }}
+      #     deploy-message: "PR #${{ github.event.pull_request.number }} preview"
+      #     enable-pull-request-comment: true
+      #     enable-commit-comment: false
+      #     overwrites-pull-request-comment: true
+      #     alias: ${{ format('pr-{0}', github.event.pull_request.number) }}
+      #     # Remove functions-dir parameter as it's causing issues
+      #   env:
+      #     NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+      #     NETLIFY_SITE_ID: "f83f333e-13b8-4ad3-b5b1-0a14c9ff6232"
+      #   timeout-minutes: 5
