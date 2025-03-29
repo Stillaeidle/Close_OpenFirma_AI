@@ -2,23 +2,22 @@ name: Deploy to Production
 
 permissions:
   contents: read
-  pull-requests: write
   deployments: write
 
 on:
-  pull_request:
+  # Run when code is actually merged to main
+  push:
     branches: [ main ]
-    types: [opened, synchronize, reopened]
     paths:
       - 'frontend/**'
+  
+  # Also allow manual triggering
+  workflow_dispatch:
 
 jobs:
   deploy:
     name: Deploy to Production
     runs-on: ubuntu-latest
-    
-    # Only run when PRs are approved and ready to merge
-    if: github.event.pull_request.merged == true
     
     environment: production
     
@@ -54,29 +53,13 @@ jobs:
             --dir=out \
             --site="f83f333e-13b8-4ad3-b5b1-0a14c9ff6232" \
             --auth="${{ secrets.NETLIFY_AUTH_TOKEN }}" \
-            --message="Production deployment from PR #${{ github.event.pull_request.number }}" \
+            --message="Production deployment from main branch" \
             --prod \
             --json > deploy_output.json
             
           # Log deployment URL
           DEPLOY_URL=$(cat deploy_output.json | jq -r '.url')
           echo "Deployed to: $DEPLOY_URL"
-          echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
         id: deploy
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-      
-      - name: Comment on PR
-        if: steps.deploy.outputs.deploy_url
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const deployUrl = '${{ steps.deploy.outputs.deploy_url }}';
-            
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: `🚀 **Production Deployment Complete**\n\nYour changes have been deployed to [close-openfirma-ai.netlify.app](${deployUrl}).`
-            });
