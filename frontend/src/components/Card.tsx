@@ -1,15 +1,21 @@
-import React from 'react';
+import { ReactNode } from 'react';
 
 interface CardProps {
-  title: string;
-  description: string;
+  children: ReactNode;
+  className?: string;
+  onClick?: () => void;
+  hover?: boolean;
 }
 
-const Card: React.FC<CardProps> = ({ title, description }) => {
+const Card = ({ children, className = '', onClick, hover = true }: CardProps) => {
+  const hoverStyles = hover ? 'transition-transform hover:transform hover:-translate-y-1' : '';
+  
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-300">
-      <h2 className="text-xl font-bold text-gray-800 mb-2">{title}</h2>
-      <p className="text-gray-600">{description}</p>
+    <div 
+      className={`bg-white rounded-lg p-4 shadow-sm ${hoverStyles} ${className}`}
+      onClick={onClick}
+    >
+      {children}
     </div>
   );
 };
