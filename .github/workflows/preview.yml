@@ -7,7 +7,7 @@ permissions:
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [ main, dev ]
     types: [opened, synchronize, reopened, closed]
     paths:
       - 'frontend/**'
@@ -17,8 +17,8 @@ jobs:
     name: Deploy PR Preview
     runs-on: ubuntu-latest
     
-    # Only deploy if PR is open and coming from dev branch
-    if: github.event.action != 'closed' && github.head_ref == 'dev'
+    # Only deploy if PR is open and either targeting dev branch or coming from dev branch to main
+    if: github.event.action != 'closed' && (github.base_ref == 'dev' || (github.base_ref == 'main' && github.head_ref == 'dev'))
     
     environment: pr-preview
     
