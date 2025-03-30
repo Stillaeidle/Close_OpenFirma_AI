@@ -14,6 +14,7 @@ COPY . .
 
 # Build the Next.js app (creates 'out' directory with static files)
 RUN npm run build
+# RUN npm run export
 
 # Production image
 FROM node:20-alpine AS runner
