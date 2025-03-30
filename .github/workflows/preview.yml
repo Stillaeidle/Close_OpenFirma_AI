@@ -17,8 +17,8 @@ jobs:
     name: Deploy PR Preview
     runs-on: ubuntu-latest
     
-    # Only deploy if PR is open and either targeting dev branch or coming from dev branch to main
-    if: github.event.action != 'closed' && (github.base_ref == 'dev' || (github.base_ref == 'main' && github.head_ref == 'dev'))
+    # Only deploy if PR is open
+    if: github.event.action != 'closed'
     
     environment: pr-preview
     
@@ -43,12 +43,29 @@ jobs:
           export NODE_ENV=production
           npm run build
           
+      - name: Debug - Check build output
+        working-directory: frontend
+        run: |
+          echo "Contents of build directory:"
+          ls -la out || echo "out directory not found"
+          
       - name: Install Netlify CLI
         run: npm install -g netlify-cli
         
       - name: Deploy to Netlify
         working-directory: frontend
         run: |
+          echo "Starting Netlify deployment..."
+          echo "PR Number: ${{ github.event.pull_request.number }}"
+          echo "Base Ref: ${{ github.base_ref }}"
+          echo "Head Ref: ${{ github.head_ref }}"
+          
+          # Verify the out directory exists
+          if [ ! -d "out" ]; then
+            echo "Error: 'out' directory not found!"
+            exit 1
+          fi
+          
           netlify deploy \
             --dir=out \
             --site="f83f333e-13b8-4ad3-b5b1-0a14c9ff6232" \
@@ -58,6 +75,7 @@ jobs:
             --json > deploy_output.json
             
           DEPLOY_URL=$(cat deploy_output.json | jq -r '.deploy_url')
+          echo "Deploy URL: $DEPLOY_URL"
           echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
         id: deploy
         env:
