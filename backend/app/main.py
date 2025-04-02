@@ -10,7 +10,7 @@ from app.core.config import settings
 
 # Create FastAPI app with metadata
 app = FastAPI(
-    title=settings.PROJECT_NAME,
+    title=settings.APP_NAME,
     description="""
     # OpenFirma Smart Farm API
     
@@ -58,4 +58,4 @@ def root():
 # Add startup event
 @app.on_event("startup")
 async def startup_event():
-    print(f"Starting {settings.PROJECT_NAME} {app.version}")
+    print(f"Starting {settings.APP_NAME} {app.version}")

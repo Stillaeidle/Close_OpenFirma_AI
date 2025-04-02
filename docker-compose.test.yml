@@ -38,7 +38,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    command: pytest
+    # Run migrations before testing
+    command: bash -c "alembic upgrade head && pytest"
     networks:
       - openfirma-network
 

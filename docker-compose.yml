@@ -25,7 +25,8 @@ services:
   api:
     build: ./backend
     container_name: openfirma-api
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    # Updated to use start.sh script which runs migrations first
+    command: /app/scripts/start.sh
     volumes:
       - ./backend:/app
     ports:

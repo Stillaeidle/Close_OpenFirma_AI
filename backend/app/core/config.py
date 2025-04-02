@@ -1,13 +1,17 @@
 import os
-from typing import Any, Dict, Optional
+from typing import List, Optional, Union, Dict, Any
 
-from pydantic import BaseSettings, PostgresDsn, validator
+from pydantic import PostgresDsn, validator
+from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     APP_NAME: str = "OpenFirma"
     DEBUG: bool = False
     API_PREFIX: str = "/api/v1"
     LOG_LEVEL: str = "info"
+    
+    # CORS
+    ALLOWED_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:8000"]
 
     # Database settings
     POSTGRES_SERVER: str = "db"

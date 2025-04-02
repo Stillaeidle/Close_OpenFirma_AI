@@ -24,8 +24,13 @@ COPY . .
 # Create directory for ML models if it doesn't exist
 RUN mkdir -p app/ml/models
 
+# Create scripts directory and add start.sh script
+RUN mkdir -p scripts
+COPY scripts/start.sh scripts/start.sh
+RUN chmod +x scripts/start.sh
+
 # Expose port
 EXPOSE 8000
 
-# Command to run the application
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Use start script to run migrations before starting app
+CMD ["./scripts/start.sh"]
