@@ -1,51 +1,23 @@
-# Database initialization
-
 import logging
+
 from sqlalchemy.orm import Session
 
-from app.db.session import Base, engine
-from app.db.models import farm, greenhouse, measurement
+from app.db.base import Base
+from app.db.session import engine
+from app.core.config import settings
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+def init_db(db: Session) -> None:
+    """Initialize the database with required initial data."""
+    # Create tables if they don't exist
+    Base.metadata.create_all(bind=engine)
 
-def init_db() -> None:
-    """
-    Initialize the database, creating tables based on models
-    """
-    try:
-        # Create all tables
-        Base.metadata.create_all(bind=engine)
-        logger.info("Database tables created successfully")
-    except Exception as e:
-        logger.error(f"Error initializing database: {e}")
-        raise
+    # Add any initial data seeding here
 
+    logger.info("PostgreSQL database initialized successfully")
 
 def create_initial_data(db: Session) -> None:
-    """
-    Create initial seed data for testing
-    """
-    # Check if we already have data
-    existing_farms = db.query(farm.Farm).count()
-    if existing_farms > 0:
-        logger.info("Database already contains data, skipping seed data creation")
-        return
-    
-    # Seed data would go here (farm creation, etc.)
-    logger.info("Initial data created successfully")
-
-
-if __name__ == "__main__":
-    # Initialize the database
-    init_db()
-    
-    # Create initial data
-    from app.db.session import SessionLocal
-    db = SessionLocal()
-    try:
-        create_initial_data(db)
-    finally:
-        db.close()
+    """Create initial data in the database."""
+    # Add code to create initial data if needed
+    pass

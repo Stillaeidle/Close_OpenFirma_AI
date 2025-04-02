@@ -1,6 +1,5 @@
 FROM node:20-alpine AS builder
 
-# Set working directory
 WORKDIR /app
 
 # Copy package files
@@ -9,27 +8,30 @@ COPY package.json package-lock.json ./
 # Install dependencies
 RUN npm ci
 
-# Copy all files
+# Copy source files
 COPY . .
 
-# Build the Next.js app (creates 'out' directory with static files)
+# Set environment variables
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Build the application and export static files
 RUN npm run build
-# RUN npm run export
 
-# Production image
-FROM node:20-alpine AS runner
+# Use Nginx to serve static files
+FROM nginx:alpine
 
-# Set working directory
-WORKDIR /app
+# Copy the static files from the builder stage
+COPY --from=builder /app/out /usr/share/nginx/html
 
-# Install serve
-RUN npm install -g serve
+# Copy a custom nginx configuration if needed
+# COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Copy static files from builder
-COPY --from=builder /app/out ./out
-
-# Expose port
+# Expose port 3000 (matching the docker-compose port)
 EXPOSE 3000
 
-# Start serve
-CMD ["serve", "-s", "out", "-l", "3000"]
+# Update nginx to listen on port 3000
+RUN sed -i 's/listen\s*80;/listen 3000;/g' /etc/nginx/conf.d/default.conf
+
+# Start Nginx
+CMD ["nginx", "-g", "daemon off;"]
