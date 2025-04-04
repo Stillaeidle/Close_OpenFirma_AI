@@ -2,7 +2,7 @@
 
 from typing import Optional, List
 from datetime import datetime
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 
 class FarmBase(BaseModel):
@@ -26,8 +26,7 @@ class Farm(FarmBase):
     updated_at: datetime
     is_active: bool = True
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class FarmList(BaseModel):

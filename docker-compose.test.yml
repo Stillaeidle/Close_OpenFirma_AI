@@ -1,0 +1,51 @@
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    container_name: openfirma-db-test
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=openfirma_test
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+      - ./infra/postgresql:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - openfirma-network
+
+  # Backend API service for testing
+  api:
+    build:
+      context: ./backend
+    container_name: openfirma-api-test
+    volumes:
+      - ./backend:/app
+    environment:
+      - POSTGRES_SERVER=db
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=openfirma_test
+      - TESTING=true
+    depends_on:
+      db:
+        condition: service_healthy
+    # Run migrations before testing
+    command: bash -c "alembic upgrade head && pytest"
+    networks:
+      - openfirma-network
+
+volumes:
+  postgres_test_data:
+
+networks:
+  openfirma-network:
+    driver: bridge

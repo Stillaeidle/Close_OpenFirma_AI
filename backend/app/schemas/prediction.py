@@ -1,7 +1,7 @@
 # Prediction schemas
 
 from typing import Dict, Any, List, Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from datetime import date, datetime
 
 
@@ -29,8 +29,8 @@ class PredictionInput(BaseModel):
     # Custom features
     features: Optional[Dict[str, Any]] = Field(None, description="Additional features for prediction")
     
-    class Config:
-        schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "greenhouse_id": "GH001",
                 "date": "2025-03-15",
@@ -52,6 +52,7 @@ class PredictionInput(BaseModel):
                 }
             }
         }
+    )
 
 
 class PredictionResult(BaseModel):
@@ -62,8 +63,9 @@ class PredictionResult(BaseModel):
     model_version: Optional[str] = Field(None, description="Version of the model used")
     features_importance: Optional[Dict[str, float]] = Field(None, description="Importance of each feature")
     
-    class Config:
-        schema_extra = {
+    model_config = ConfigDict(
+        from_attributes=True,
+        json_schema_extra={
             "example": {
                 "prediction": 120.5,
                 "confidence": 0.85,
@@ -78,7 +80,7 @@ class PredictionResult(BaseModel):
                 }
             }
         }
-        orm_mode = True
+    )
 
 
 class PredictionHistory(BaseModel):

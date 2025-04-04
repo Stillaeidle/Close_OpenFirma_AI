@@ -1,70 +1,77 @@
-
 services:
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    container_name: openfirma-db
+    restart: always
+    env_file:
+      - ./backend/configs/production.env
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infra/postgresql:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - openfirma-network
+
   # Backend API service
   api:
     build: ./backend
     container_name: openfirma-api
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    command: /app/scripts/start.sh
     volumes:
       - ./backend:/app
     ports:
       - "8000:8000"
+    env_file:
+      - ./backend/configs/production.env
     environment:
-      - POSTGRES_SERVER=db
-      - POSTGRES_PORT=5432
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=openfirma
+      - ENVIRONMENT=production
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       - openfirma-network
 
-  # Frontend service (static files served with 'serve')
+  # Frontend service
   frontend:
-    build: ./frontend
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
     container_name: openfirma-frontend
     ports:
       - "3000:3000"
-    environment:
-      - NODE_ENV=production
     depends_on:
       - api
     networks:
       - openfirma-network
 
-  # Database service
-  db:
-    image: postgres:14-alpine
-    container_name: openfirma-db
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=openfirma
-    ports:
-      - "5433:5432"  # Using 5433 on host to avoid conflicts
-    networks:
-      - openfirma-network
-
-  # Database Admin UI
+  # pgAdmin for database management
   pgadmin:
-    image: dpage/pgadmin4
+    image: dpage/pgadmin4:latest
     container_name: openfirma-pgadmin
     environment:
       - PGADMIN_DEFAULT_EMAIL=admin@openfirma.com
       - PGADMIN_DEFAULT_PASSWORD=admin
+      - PGADMIN_CONFIG_SERVER_MODE=False
     ports:
       - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
     depends_on:
       - db
     networks:
       - openfirma-network
 
+volumes:
+  postgres_data:
+  pgadmin_data:
+
 networks:
   openfirma-network:
     driver: bridge
-
-volumes:
-  postgres_data:

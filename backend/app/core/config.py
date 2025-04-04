@@ -1,43 +1,70 @@
 import os
-from typing import List, Optional, Union, Dict, Any
+import secrets
+from typing import Any, Dict, List, Optional, Union
 
-from pydantic import field_validator, AnyHttpUrl
+from pydantic import AnyHttpUrl, Field, PostgresDsn, validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic.networks import PostgresDsn
 
 
 class Settings(BaseSettings):
-    PROJECT_NAME: str = "OpenFirma Smart Farm API"
+    """Application settings."""
     
-    # CORS
+    # API Configuration
+    API_PREFIX: str = "/api/v1"
+    PROJECT_NAME: str = "OpenFirma API"
+    APP_NAME: str = "OpenFirma"
+    PROJECT_DESCRIPTION: str = "Farm and greenhouse management API with ML predictions"
+    VERSION: str = "0.1.0"
+    LOG_LEVEL: str = "info"
+    
+    # CORS Configuration
     ALLOWED_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:8000"]
     
-    # Database
-    POSTGRES_SERVER: str = os.getenv("POSTGRES_SERVER", "localhost")
-    POSTGRES_PORT: int = int(os.getenv("POSTGRES_PORT", "5432"))  # Convert to int
-    POSTGRES_USER: str = os.getenv("POSTGRES_USER", "postgres")
-    POSTGRES_PASSWORD: str = os.getenv("POSTGRES_PASSWORD", "postgres")
-    POSTGRES_DB: str = os.getenv("POSTGRES_DB", "openfirma")
-    SQLALCHEMY_DATABASE_URI: Optional[str] = None
+    # Security Configuration
+    SECRET_KEY: str = Field(default_factory=lambda: secrets.token_urlsafe(32), description="Default is a random token; override in production")
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8  # 8 days
+    ALGORITHM: str = "HS256"
     
-    @field_validator("SQLALCHEMY_DATABASE_URI", mode="before")
-    def assemble_db_connection(cls, v: Optional[str], info) -> Any:
+    # Database Configuration
+    POSTGRES_SERVER: str = "db"
+    POSTGRES_USER: str = "postgres"
+    POSTGRES_PASSWORD: str = "postgres"
+    POSTGRES_DB: str = "openfirma"
+    POSTGRES_PORT: str = "5432"
+    DATABASE_URL: Optional[PostgresDsn] = None
+    
+    @validator("DATABASE_URL", pre=True)
+    def assemble_db_connection(cls, v: Optional[str], values: Dict[str, Any]) -> Any:
         if isinstance(v, str):
             return v
-        
-        values = info.data
-        
-        # Use direct string construction to avoid PostgresDsn.build() issues
-        return f"postgresql://{values.get('POSTGRES_USER')}:{values.get('POSTGRES_PASSWORD')}@{values.get('POSTGRES_SERVER')}:{values.get('POSTGRES_PORT')}/{values.get('POSTGRES_DB')}"
+        return PostgresDsn.build(
+            scheme="postgresql",
+            user=values.get("POSTGRES_USER"),
+            password=values.get("POSTGRES_PASSWORD"),
+            host=values.get("POSTGRES_SERVER"),
+            port=values.get("POSTGRES_PORT"),
+            path=f"/{values.get('POSTGRES_DB') or ''}",
+        )
     
-    # Security
-    SECRET_KEY: str = os.getenv("SECRET_KEY", "development_secret_key_change_in_production")
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8  # 8 days
+    # ML Model Configuration
+    MODEL_PATH: str = "app/models/ml/artifacts/model.joblib"
+    PREPROCESSING_CONFIG_PATH: str = "app/models/ml/artifacts/preprocessing_config.json"
     
-    # ML Model Paths
-    ML_MODELS_DIR: str = os.getenv("ML_MODELS_DIR", "app/ml/models")
+    # Environment
+    ENVIRONMENT: str = "development"
+    DEBUG: bool = False
     
-    model_config = SettingsConfigDict(case_sensitive=True, env_file=".env")
+    # Testing flag
+    TESTING: bool = False
+    
+    # Pydantic Config
+    model_config = SettingsConfigDict(
+        env_file=("configs/development.env" if os.getenv("ENVIRONMENT", "development") == "development" 
+                  else "configs/production.env"),
+        env_file_encoding="utf-8",
+        case_sensitive=True,
+    )
 
 
+# Initialize settings based on environment
 settings = Settings()
