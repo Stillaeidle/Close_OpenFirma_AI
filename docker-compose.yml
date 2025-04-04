@@ -4,10 +4,8 @@ services:
     image: postgres:15-alpine
     container_name: openfirma-db
     restart: always
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=openfirma
+    env_file:
+      - ./backend/configs/production.env
     ports:
       - "5432:5432"
     volumes:
@@ -25,18 +23,15 @@ services:
   api:
     build: ./backend
     container_name: openfirma-api
-    # Updated to use start.sh script which runs migrations first
     command: /app/scripts/start.sh
     volumes:
       - ./backend:/app
     ports:
       - "8000:8000"
+    env_file:
+      - ./backend/configs/production.env
     environment:
-      - POSTGRES_SERVER=db
-      - POSTGRES_PORT=5432
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=openfirma
+      - ENVIRONMENT=production
     depends_on:
       db:
         condition: service_healthy

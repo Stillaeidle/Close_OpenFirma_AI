@@ -5,6 +5,11 @@ set -e
 echo "Running database migrations..."
 alembic upgrade head
 
-# Start the application with hot reload for development
-echo "Starting application..."
-exec uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+# Start the application based on environment
+if [ "$ENVIRONMENT" = "development" ]; then
+    echo "Starting development server..."
+    uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+else
+    echo "Starting production server..."
+    uvicorn app.main:app --host 0.0.0.0 --port 8000
+fi

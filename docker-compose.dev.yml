@@ -4,10 +4,8 @@ services:
     image: postgres:15-alpine
     container_name: openfirma-db-dev
     restart: always
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=openfirma_dev
+    env_file:
+      - ./backend/configs/development.env
     ports:
       - "5432:5432"
     volumes:
@@ -27,19 +25,15 @@ services:
       context: ./backend
       dockerfile: Dockerfile.dev
     container_name: openfirma-api-dev
-    # Changed command to use start.sh script that runs migrations first
     command: /app/scripts/start.sh
     volumes:
       - ./backend:/app
     ports:
       - "8000:8000"
+    env_file:
+      - ./backend/configs/development.env
     environment:
-      - POSTGRES_SERVER=db
-      - POSTGRES_PORT=5432
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=openfirma_dev
-      - DEBUG=true
+      - ENVIRONMENT=development
     depends_on:
       db:
         condition: service_healthy

@@ -2,7 +2,7 @@
 
 from typing import Optional, List
 from datetime import datetime
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 
 class GreenhouseBase(BaseModel):
@@ -43,8 +43,7 @@ class Greenhouse(GreenhouseBase):
     updated_at: datetime
     is_active: bool = True
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class GreenhouseList(BaseModel):
@@ -89,8 +88,7 @@ class Planting(PlantingBase):
     created_at: datetime
     updated_at: datetime
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class PlantingList(BaseModel):
