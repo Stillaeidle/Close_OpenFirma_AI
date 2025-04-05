@@ -68,7 +68,7 @@ jobs:
           
           netlify deploy \
             --dir=out \
-            --site="f83f333e-13b8-4ad3-b5b1-0a14c9ff6232" \
+            --site="${{ secrets.NETLIFY_SITE_ID }}" \
             --auth="${{ secrets.NETLIFY_AUTH_TOKEN }}" \
             --message="PR #${{ github.event.pull_request.number }} preview" \
             --alias="pr-${{ github.event.pull_request.number }}" \
@@ -113,7 +113,7 @@ jobs:
           
           # First, list deploys to find the one with our alias
           DEPLOYS=$(netlify api listSiteDeploys \
-            --data '{"site_id":"f83f333e-13b8-4ad3-b5b1-0a14c9ff6232"}')
+            --data '{"site_id":"${{ secrets.NETLIFY_SITE_ID }}"}')
           
           # Find the deploy with our alias
           DEPLOY_ID=$(echo $DEPLOYS | jq -r '.[] | select(.deploy_ssl_url | contains("pr-${{ github.event.pull_request.number }}")) | .id')
@@ -123,7 +123,7 @@ jobs:
             
             # Delete the deployment
             netlify api deleteSiteDeploy \
-              --data "{\"site_id\":\"f83f333e-13b8-4ad3-b5b1-0a14c9ff6232\", \"deploy_id\":\"$DEPLOY_ID\"}"
+              --data "{\"site_id\":\"${{ secrets.NETLIFY_SITE_ID }}\", \"deploy_id\":\"$DEPLOY_ID\"}"
             
             echo "Preview deployment deleted successfully"
           else
