@@ -20,4 +20,5 @@ const Card = ({ children, className = '', onClick, hover = true }: CardProps) =>
   );
 };
 
+
 export default Card;
